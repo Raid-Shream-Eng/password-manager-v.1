@@ -1,0 +1,12 @@
+{
+    "compilerOPptions": {
+        "target": "",
+        "moduleResolution": "",
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalProertyTypes": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+    }
+}
