@@ -1,8 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
+    "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": [
+    "app",
+    "components",
+    "constants",
+    "hooks",
+    "scripts",
+    "*.ts",
+    "*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }

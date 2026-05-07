@@ -104,6 +104,10 @@ importers:
         version: 5.9.3
 
   packages/password-core:
+    dependencies:
+      '@password-manager/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
     devDependencies:
       tsx:
         specifier: ^4.20.0

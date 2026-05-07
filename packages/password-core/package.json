@@ -6,6 +6,9 @@
     "scripts": {
         "test:manual": "tsx src/testVectors/index.ts"
     },
+    "dependencies": {
+    "@password-manager/shared-types": "workspace:*"
+    },
     "devDependencies": {
         "tsx": "^4.20.0"
     }
