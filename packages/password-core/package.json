@@ -4,6 +4,8 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "test": "vitest",
+        "typecheck": "tsc --noEmit",
         "test:manual": "tsx src/testVectors/index.ts"
     },
     "dependencies": {
