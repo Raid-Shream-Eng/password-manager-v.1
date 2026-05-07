@@ -1,1 +1,53 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+web-build/
+.expo/
+.expo-shared/
+
+# Workspace package build outputs
+packages/*/dist/
+apps/*/dist/
+apps/*/.expo/
+apps/*/web-build/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Mobile native build/signing artifacts
+android/
+ios/
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+
+# Password-manager sensitive local data
+*.vault
+*.vault.json
+local-vault*
+recovery-key*
+master-key*
