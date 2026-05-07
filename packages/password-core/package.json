@@ -1,0 +1,12 @@
+{
+    "name": "@password-manager/password-core",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test:manual": "tsx src/testVectors/index.ts"
+    },
+    "devDependencies": {
+        "tsx": "^4.20.0"
+    }
+}

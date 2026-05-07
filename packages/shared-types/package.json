@@ -1,0 +1,12 @@
+{
+    "name": "@password-manager/shared-types",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "main": "src/index.js",
+    "types": "src/index.ts",
+    "dependencies": {
+       "zod": "^4.0.0"
+    }
+    
+}
