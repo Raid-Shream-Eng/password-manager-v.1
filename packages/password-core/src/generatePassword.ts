@@ -1,9 +1,9 @@
 import {
-    CanonicalGenerationInput,
     canonicalizeGenerationInput,
     encodeCanonicalGenerationInput,
     type GenerationInput,
 } from './canonicalize';
+
 import { mapBytesToPassword } from './mapBytesToPassword';
 
 export type PasswordCoreCryptoProvider = {
@@ -17,6 +17,6 @@ export async function generatePassword(params: {
     const canonicalInput= canonicalizeGenerationInput(params.input);
     const message = encodeCanonicalGenerationInput(canonicalInput);
     const bytes = await params.cryptoProvider.hmacSha256(params.masterKey, message);
-    return mapBytesToPassword(bytes, canonicalInput.profile);
+    return mapBytesToPassword(bytes, canonicalInput.passwordProfile);
 
 }
