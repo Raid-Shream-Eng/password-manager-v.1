@@ -1,4 +1,4 @@
-export type VaultHeader = {
+export type VaultHeaderV1 = {
     vaultId: string;
     appVersion: string;
     vaultFormatVersion: 1;

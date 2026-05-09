@@ -1,7 +1,15 @@
-import { CryptoProvider } from "./types";
+import type { CryptoProvider } from "./types";
+import { randomBytes } from "./randomBytes";
+import { hmacSha256 } from "./hmac";
+import { hkdfSha256 } from "./hkdf";
+import { encryptAead, decryptAead } from "./encryption";
 
-function createCryptoProvider() {
-  throw new Error("Crypto provider is not implemented yet. Select and test a real Expo-compatible crypto library first.");
+export function createCryptoProvider(): CryptoProvider {
+  return {
+    randomBytes,
+    hmacSha256,
+    hkdfSha256,
+    encryptAead,
+    decryptAead,
+  };
 }
-
-export default createCryptoProvider

@@ -1,4 +1,4 @@
-export type PasswordProfile = {
+export type PasswordProfileV1 = {
     length: number;
 
     includeUppercase: boolean;
@@ -6,7 +6,7 @@ export type PasswordProfile = {
     includeNumbers: boolean;
     includeSymbols: boolean;
 
-    allowedSymbols?: string;
+    allowedSymbols: string;
 
     passwordVersion: number;
 
@@ -14,7 +14,7 @@ export type PasswordProfile = {
     requiredStartWithLetter: boolean;
 };
 
-export const defaultPasswordProfile: PasswordProfile = {
+export const defaultPasswordProfileV1: PasswordProfileV1 = {
     length: 20, 
 
     includeUppercase: true,

@@ -1,76 +1,49 @@
-import { normalizeDomain } from "./normalizeDomain";
-import { normalizeGenerationLabel } from "./normalizeGenerationLabel";
-import {
-    type PasswordProfile,
-    type ValidPasswordProfile,
-    validatePasswordProfile,
-} from "./validatePasswordProfile";
+import type { Result } from "@password-manager/shared-types";
 
-export type GenerationAccountIdentifier =
-  | {
-      kind: "domain";
-      domain: string;
-    }
-  | {
-      kind: "label";
-      generationLabel: string;
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+/**
+ * Produces stable JSON by sorting object keys recursively.
+ * This is important because password generation must be deterministic.
+ */
+export function canonicalizeJson(value: JsonValue): Result<string> {
+  try {
+    return {
+      ok: true,
+      value: JSON.stringify(sortJson(value)),
     };
-
-export type GenerationInput = {
-  algorithmVersion: 1;
-  account: GenerationAccountIdentifier;
-  usernameOrEmail: string;
-  passwordProfile: PasswordProfile;
-
-  displayName?: string;
-  notes?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  lastUsedAt?: string;
-  theme?: string;
-  language?: string;
-};
-
-export type CanonicalGenerationInput = {
-  algorithmVersion: 1;
-  account:
-    | {
-        kind: "domain";
-        normalizedDomain: string;
-      }
-    | {
-        kind: "label";
-        generationLabel: string;
-      };
-  usernameOrEmail: string;
-  passwordProfile: ValidPasswordProfile;
-};
-export function canonicalizeGenerationInput(input: GenerationInput): CanonicalGenerationInput {
-  const profileResult = validatePasswordProfile(input.passwordProfile);
-
-  if (!profileResult.ok) {
-    throw new Error(profileResult.error.message ?? "Invalid password profile");
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        code: "CANONICALIZE_FAILED",
+        message: "Failed to canonicalize JSON.",
+        cause,
+      },
+    };
   }
-
-  const account =
-    input.account.kind === "domain"
-      ? {
-          kind: "domain" as const,
-          normalizedDomain: normalizeDomain(input.account.domain),
-        }
-      : {
-          kind: "label" as const,
-          generationLabel: normalizeGenerationLabel(input.account.generationLabel),
-        };
-
-  return {
-    algorithmVersion: input.algorithmVersion,
-    account,
-    usernameOrEmail: input.usernameOrEmail,
-    passwordProfile: profileResult.value,
-  };
 }
 
-export function encodeCanonicalGenerationInput(input: CanonicalGenerationInput): Uint8Array {
-  return new TextEncoder().encode(JSON.stringify(input));
+function sortJson(value: JsonValue): JsonValue {
+  if (Array.isArray(value)) {
+    return value.map(sortJson);
+  }
+
+  if (value !== null && typeof value === "object") {
+    const sorted: { [key: string]: JsonValue } = {};
+
+    for (const key of Object.keys(value).sort()) {
+      sorted[key] = sortJson(value[key]!);
+    }
+
+    return sorted;
+  }
+
+  return value;
 }

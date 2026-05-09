@@ -1,6 +1,6 @@
-import { PasswordProfile } from "./passwordProfile";
+import { PasswordProfileV1 } from "./passwordProfile";
 
-export type PasswordGenerationInput = {
+export type PasswordGenerationInputV1 = {
     algorithmVersion: 1;
     site: |{
         kind: "domain";
@@ -11,12 +11,12 @@ export type PasswordGenerationInput = {
     };
 
     usernameOrEmail: string;
-    passwordProfile: PasswordProfile;
+    passwordProfile: PasswordProfileV1;
 };
 
-export type PasswordGenerationAttemptInput = {
-    input: PasswordGenerationInput;
-    attemptNumber: number;
+export type PasswordGenerationAttemptInputV1 = {
+    input: PasswordGenerationInputV1;
+    attempt: number;
 };
 
 export const PASSWORD_GENERATION_ALGORITHM_VERSION = 1;

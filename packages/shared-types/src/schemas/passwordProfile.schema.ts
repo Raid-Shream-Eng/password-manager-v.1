@@ -1,5 +1,5 @@
 import {z} from 'zod';
-export const passwordProfileSchema = z.object({
+export const passwordProfileV1Schema = z.object({
     length: z.number().int().min(12).max(128),
 
     includeUppercase: z.boolean(),
@@ -52,4 +52,4 @@ export const passwordProfileSchema = z.object({
     }
 });
 
-export type PasswordProfileSchema = z.infer<typeof passwordProfileSchema>;
+export type PasswordProfileV1Schema = z.infer<typeof passwordProfileV1Schema>;

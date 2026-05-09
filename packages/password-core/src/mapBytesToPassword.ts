@@ -1,74 +1,146 @@
-import {type ValidPasswordProfile} from "./validatePasswordProfile";
+import type {
+  PasswordProfileV1,
+  Result,
+} from "@password-manager/shared-types";
+import {
+  AMBIGUOUS_CHARACTERS,
+  LOWERCASE,
+  NUMBERS,
+  UPPERCASE,
+} from "./characterSets";
 
-const UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
-const NUMBER = "0123456789";
-const AMBIGUOUS = new Set(["O", "0", "I", "l", "1"]);
+export function mapBytesToPassword(params: {
+  bytes: Uint8Array;
+  profile: PasswordProfileV1;
+}): Result<string> {
+  const { bytes, profile } = params;
 
-function removeAmbiguousCharacters(chars: string): string {
-    return [...chars].filter((char)=> !AMBIGUOUS.has(char)).join("");
+  const characterPool = buildCharacterPool(profile);
+
+  if (!characterPool.ok) {
+    return characterPool;
+  }
+
+  if (bytes.length < profile.length) {
+    return {
+      ok: false,
+      error: {
+        code: "INSUFFICIENT_RANDOM_BYTES",
+        message: "Not enough bytes to map password.",
+      },
+    };
+  }
+
+  let password = "";
+
+  for (let i = 0; i < profile.length; i++) {
+    const byte = bytes[i];
+
+    if (byte === undefined) {
+      return {
+        ok: false,
+        error: {
+          code: "INSUFFICIENT_RANDOM_BYTES",
+          message: "Not enough bytes to map password.",
+        },
+      };
+    }
+
+    const index = byte % characterPool.value.length;
+    password += characterPool.value[index]!;
+  }
+
+  if (!satisfiesRequiredClasses(password, profile)) {
+    return {
+      ok: false,
+      error: {
+        code: "PASSWORD_DOES_NOT_SATISFY_RULES",
+        message: "Generated candidate does not satisfy password rules.",
+      },
+    };
+  }
+
+  if (profile.requiredStartWithLetter && !/^[a-zA-Z]/.test(password)) {
+    return {
+      ok: false,
+      error: {
+        code: "PASSWORD_DOES_NOT_SATISFY_RULES",
+        message: "Generated candidate does not start with a letter.",
+      },
+    };
+  }
+
+  return {
+    ok: true,
+    value: password,
+  };
 }
 
-function pick(chars: string, byte: number): string {
-    return chars[byte % chars.length]!;
+function buildCharacterPool(profile: PasswordProfileV1): Result<string> {
+  let pool = "";
+
+  if (profile.includeLowercase) {
+    pool += LOWERCASE;
+  }
+
+  if (profile.includeUppercase) {
+    pool += UPPERCASE;
+  }
+
+  if (profile.includeNumbers) {
+    pool += NUMBERS;
+  }
+
+  if (profile.includeSymbols) {
+    pool += profile.allowedSymbols;
+  }
+
+  if (profile.avoidAmbiguousCharacters) {
+    pool = [...pool]
+      .filter((char) => !AMBIGUOUS_CHARACTERS.has(char))
+      .join("");
+  }
+
+  if (!pool) {
+    return {
+      ok: false,
+      error: {
+        code: "INVALID_PASSWORD_PROFILE",
+        message: "Character pool is empty.",
+      },
+    };
+  }
+
+  return {
+    ok: true,
+    value: pool,
+  };
 }
 
-export function mapBytesToPassword(
-    bytes: Uint8Array,
-    profile: ValidPasswordProfile
-): string {
-    if (bytes.length === 0) {
-        throw new Error("Bytes are required");
-    }   
+function satisfiesRequiredClasses(
+  password: string,
+  profile: PasswordProfileV1,
+): boolean {
+  if (profile.includeLowercase && !/[a-z]/.test(password)) {
+    return false;
+  }
 
-    const groups: string[] = [];
+  if (profile.includeUppercase && !/[A-Z]/.test(password)) {
+    return false;
+  }
 
-    const uppercase = profile.includeUppercase ? (profile.avoidAmbiguousCharacters ? removeAmbiguousCharacters(UPPERCASE) : UPPERCASE) : "";
-    const lowercase = profile.includeLowercase ? (profile.avoidAmbiguousCharacters ? removeAmbiguousCharacters(LOWERCASE) : LOWERCASE) : "";
-    const numbers = profile.includeNumbers ? (profile.avoidAmbiguousCharacters ? removeAmbiguousCharacters(NUMBER) : NUMBER) : "";
-    const symbols = profile.includeSymbols ? (profile.avoidAmbiguousCharacters ? removeAmbiguousCharacters(profile.allowedSymbols) : profile.allowedSymbols) : "";
-    if (profile.includeUppercase) {groups.push(uppercase);}
-    if (profile.includeLowercase) {groups.push(lowercase);}
-    if (profile.includeNumbers) {groups.push(numbers);}
-    if (profile.includeSymbols) {groups.push(symbols);}
+  if (profile.includeNumbers && !/[0-9]/.test(password)) {
+    return false;
+  }
 
-    const allChars = groups.join("");
-    const letterChars = [
-        profile.includeUppercase ? uppercase : "",
-        profile.includeLowercase ? lowercase : "",
-    ].join("");
-    const password: string[] = [];
-    let index = 0;
-    if (profile.requiredStartWithLetter) {
-        password.push(pick(letterChars, bytes[index % bytes.length]!));
-        index++;
+  if (profile.includeSymbols) {
+    const symbols = new Set([...profile.allowedSymbols]);
+    const hasSymbol = [...password].some((char) => symbols.has(char));
+
+    if (!hasSymbol) {
+      return false;
     }
+  }
 
-    for (const group of groups) {
-        password.push(pick(group, bytes[index % bytes.length]!));
-        index++;
-    }
-
-    while (password.length < profile.length) {
-        password.push(pick(allChars, bytes[index % bytes.length]!));
-        index++;
-    }
-
-   const minShuffleIndex = profile.requiredStartWithLetter ? 1 : 0;
-   for (let i = password.length - 1; i > minShuffleIndex; i--) {
-        const j = bytes[index % bytes.length]! % (i + 1);
-
-        if (j< minShuffleIndex) {
-            index++;
-            continue;
-        }
-        const current = password[i]!;
-        const swap = password[j]!;
-        password[i] = swap;
-        password[j] = current;
-        index++;
-    }
-    
-
-    return password.join("");
+  return true;
 }

@@ -2,11 +2,13 @@ import type { Result } from "@password-manager/shared-types";
 
 export type CryptoErrorCode = 
 | "CRYPTO_RANDOM_FAILED"
-| "CRYPTO_HHAC_FAILED"
+| "CRYPTO_HMAC_FAILED"
 | "CRYPTO_HKDF_FAILED"
 | "CRYPTO_ENCRYPT_FAILED"
 | "CRYPTO_DECRYPT_FAILED"
-| "CRYPTO_UNSUPPORTED";
+| "CRYPTO_UNSUPPORTED"
+| "INVALID_KEY_LENGTH"
+| "INVALID_NONCE_LENGTH";
 
 export type CryptoError = {
     code: CryptoErrorCode;
@@ -15,6 +17,8 @@ export type CryptoError = {
 };
 
 export type CryptoResult<T> = Result<T, CryptoError>;
+
+export type AeadAlgorithm = "XChaCha20-Poly1305";
 
 export type CryptoProvider = {
   randomBytes(length: number): CryptoResult<Uint8Array>;
@@ -37,6 +41,7 @@ export type CryptoProvider = {
     associatedData?: Uint8Array;
   }): Promise<
     CryptoResult<{
+      algorithm: AeadAlgorithm;
       nonce: Uint8Array;
       ciphertext: Uint8Array;
     }>
@@ -47,5 +52,6 @@ export type CryptoProvider = {
     nonce: Uint8Array;
     ciphertext: Uint8Array;
     associatedData?: Uint8Array;
+    algorithm: AeadAlgorithm;
   }): Promise<CryptoResult<Uint8Array>>;
 };

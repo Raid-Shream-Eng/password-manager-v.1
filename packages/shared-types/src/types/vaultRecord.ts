@@ -1,4 +1,4 @@
-export type LocalVaultRecord = {
+export type LocalVaultRecordV1 = {
     id: string;
     schemaVersion: 1;
     encryptionVersion: 1;
