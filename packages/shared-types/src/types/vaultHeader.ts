@@ -20,5 +20,4 @@ export type VaultHeaderV1 = {
     createdAt: string;
     updatedAt: string;
 };
-{/* شلتها لأنها مش مدعومة و (Typescript) بصيح عليها  */}
-{/*|"AES-256-GCM"*/}
+// AES-256-GCM is intentionally not included until crypto-core supports it.
