@@ -14,9 +14,11 @@ export type VaultHeaderV1 = {
         type : "master-password";
         encryptedRootVaultKey: string;
         nonce: string;
-        encryptionAlgorithm: "XChaCha20-Poly1305"|"AES-256-GCM";
+        encryptionAlgorithm: "XChaCha20-Poly1305";
     };
 
     createdAt: string;
     updatedAt: string;
 };
+{/* شلتها لأنها مش مدعومة و (Typescript) بصيح عليها  */}
+{/*|"AES-256-GCM"*/}

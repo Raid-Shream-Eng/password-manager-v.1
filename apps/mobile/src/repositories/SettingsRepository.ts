@@ -46,14 +46,13 @@ export class SetttingsRpository{
             };
         } catch (cause) {
            return {
-            ok: false,
-            error: {
-                code:"DATABASE_ERROR",
-                message:"Failed to save setting.",
-                cause
-            }
-        
-        } 
+                ok: false,
+                error: {
+                    code:"DATABASE_ERROR",
+                    message:"Failed to save setting.",
+                    cause
+                },
+            };
         }
     }
 }
