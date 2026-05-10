@@ -11,7 +11,7 @@ export type UnlockedVaultSession = {
     unlockedAt: string;
 };
 
-export class VaultSession {
+export class VaultSessionService {
     private session: UnlockedVaultSession|null=null;
 
     constructor(
