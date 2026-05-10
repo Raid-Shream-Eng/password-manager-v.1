@@ -1,29 +1,123 @@
-# Password Manager
+# Password Manager Project
 
-A local-first password manager built as a pnpm monorepo. The project is being developed in layers: shared contracts first, core deterministic password logic next, crypto compatibility checks before selecting a real crypto provider, and then the Expo mobile app UI.
+This project is a local-first password manager built with a pnpm monorepo. I am building it step by step so each part of the app has a clear responsibility before I connect everything together.
 
-## Workspace
+The main goal is to create a secure password manager that can generate deterministic passwords, store encrypted vault data locally, and later provide a mobile interface using Expo React Native.
+
+## Project Structure
+
+The repository is organized like this:
 
 ```text
 apps/
-  mobile/              Expo React Native app
+  mobile/              Expo React Native mobile app
 
 packages/
-  shared-types/        Shared TypeScript contracts, Result types, and Zod schemas
-  crypto-core/         Crypto provider interface and compatibility test scaffold
-  password-core/       Deterministic password generation foundation
+  shared-types/        Shared contracts, Result types, errors, and schemas
+  crypto-core/         Crypto provider interface and crypto implementation
+  password-core/       Password generation and validation logic
 ```
 
-## Current Status
+I separated the project this way because I do not want the core password logic to depend on the mobile app, React Native, Expo, Redux, or storage code.
 
-- `shared-types` defines MVP contracts for password profiles, generation input, vault items, vault records, vault headers, and site identifiers.
-- `crypto-core` defines the crypto provider interface and placeholder provider. No fake crypto is used in production code.
-- `password-core` implements Result-based domain normalization, canonical JSON, password profile validation, byte-to-password mapping, and deterministic generation using an injected HMAC provider.
-- `apps/mobile` has the base dependencies, Redux store slices, and initial folder structure for future screens.
+## What Each Package Does
+
+### shared-types
+
+This package is the trusted source for shared contracts.
+
+It contains the common types that other packages use, such as:
+
+- `Result<T>`
+- shared error codes
+- password profile contracts
+- password generation input contracts
+- vault header contracts
+- vault record contracts
+- vault item payload contracts
+- Zod schemas for validation
+
+I use this package so I do not duplicate the same types in different places.
+
+### password-core
+
+This package contains the password generation foundation.
+
+It handles:
+
+- domain normalization
+- generation label normalization
+- stable canonical JSON
+- password profile validation
+- byte-to-password mapping
+- deterministic password generation
+
+This package does not use React Native, Expo, Redux, SQLite, or UI code. It only focuses on password logic.
+
+The password generator uses an injected crypto provider, which means `password-core` does not choose the crypto library itself. That keeps the package easier to test and easier to reuse.
+
+### crypto-core
+
+This package defines and implements the crypto provider used by the rest of the project.
+
+It includes:
+
+- secure random bytes
+- HMAC-SHA-256
+- HKDF-SHA-256
+- authenticated encryption
+- authenticated decryption
+- encoding helpers
+
+For the MVP, I started using Expo-compatible crypto tools and noble libraries. The crypto provider still needs to be tested inside Expo and on Android before it can be considered fully ready for real use.
+
+### mobile
+
+This is the Expo React Native app.
+
+Right now, it contains the basic app foundation, Redux setup, and the start of the local SQLite repository layer.
+
+The mobile app will eventually handle:
+
+- creating a vault
+- unlocking a vault
+- storing encrypted vault records
+- showing saved passwords
+- generating passwords
+- managing settings
+
+## Current Progress
+
+So far, I have worked on the foundation layers first.
+
+Completed or started:
+
+- Created the pnpm monorepo structure.
+- Added shared contracts in `shared-types`.
+- Added Result-based error handling.
+- Built the password generation foundation in `password-core`.
+- Added tests for password normalization, validation, mapping, and generation.
+- Added a real crypto provider structure in `crypto-core`.
+- Added HMAC, HKDF, random bytes, and authenticated encryption support.
+- Started the SQLite repository layer in the mobile app.
+
+## Security Rules I Am Following
+
+I am trying to keep the project secure by following these rules:
+
+- Do not store secrets in Redux.
+- Do not store the master password globally.
+- Do not store vault keys in Redux.
+- Do not store generated passwords after the screen is closed.
+- Do not commit vault files, keys, `.env` files, or generated build files.
+- Use `Result<T>` for expected errors instead of throwing exceptions.
+- Keep saved contracts versioned with `V1`.
+- Keep shared contracts in `shared-types`.
+- Keep password generation independent from the mobile UI.
 
 ## Important Security Notes
 
-Redux and global app state must never store secrets:
+Redux must never store:
 
 ```text
 master password
@@ -35,26 +129,43 @@ decrypted notes globally
 recovery key
 ```
 
-Crypto is not finalized yet. `crypto-core` intentionally throws from `createCryptoProvider()` until a real Expo-compatible crypto library is selected and tested.
+These values should only live in memory for as long as they are needed.
 
-## Scripts
+## Local Storage Plan
 
-From the repo root:
+For local storage, I am building a repository layer around Expo SQLite.
+
+The goal is that screens and services should not write SQL directly. Instead, they should use repository classes.
+
+The planned tables are:
+
+```text
+vault_header
+vault_records
+history_records
+app_settings
+```
+
+The vault records will only store encrypted data, not decrypted passwords or notes.
+
+## Commands
+
+From the repository root:
 
 ```powershell
 pnpm.cmd install
-pnpm.cmd test
 pnpm.cmd typecheck
+pnpm.cmd test
 ```
 
 Package-specific checks:
 
 ```powershell
 pnpm.cmd --filter @password-manager/shared-types typecheck
-pnpm.cmd --filter @password-manager/crypto-core typecheck
-pnpm.cmd --filter @password-manager/crypto-core test
 pnpm.cmd --filter @password-manager/password-core typecheck
 pnpm.cmd --filter @password-manager/password-core test
+pnpm.cmd --filter @password-manager/crypto-core typecheck
+pnpm.cmd --filter @password-manager/crypto-core test
 pnpm.cmd --filter mobile typecheck
 ```
 
@@ -64,75 +175,28 @@ Run the mobile app:
 pnpm.cmd --filter mobile start
 ```
 
-## Packages
+## What I Need To Do Next
 
-### `@password-manager/shared-types`
+The next steps are:
 
-Shared source of truth for domain contracts.
+- Finish the SQLite repositories.
+- Add `SettingsRepository`.
+- Add `HistoryRecordRepository` or decide to defer it clearly.
+- Build `VaultSessionService`.
+- Build `VaultCreationService`.
+- Connect create-vault and unlock-vault screens.
+- Manually test the crypto provider inside Expo and Android.
+- Replace any temporary password KDF placeholder with a real password KDF before real use.
 
-Includes:
+## Current Limitations
 
-- `Result<T, E>` and app error codes
-- `SiteIdentifier`
-- `PasswordProfileV1` and `defaultPasswordProfileV1`
-- `PasswordGenerationInputV1`
-- `VaultItemPayloadV1`
-- `LocalVaultRecordV1`
-- `VaultHeaderV1`
-- Zod schemas for password profiles and site identifiers
+The project is not ready for real password storage yet.
 
-### `@password-manager/crypto-core`
+Before real use, I still need to make sure:
 
-Defines the crypto provider contract:
-
-- `randomBytes`
-- `hmacSha256`
-- `hkdfSha256`
-- `encryptAead`
-- `decryptAead`
-
-The package currently contains only the interface, encoding helpers, placeholder provider, and compatibility test template.
-
-### `@password-manager/password-core`
-
-Platform-independent deterministic password generation foundation.
-
-Includes:
-
-- domain normalization
-- stable canonical JSON
-- password profile validation wrapper
-- byte-to-password mapping
-- deterministic `generatePassword()` using injected crypto
-- Vitest coverage for the foundation behavior
-
-### `mobile`
-
-Expo app foundation with:
-
-- Redux Toolkit
-- React Redux
-- React Hook Form
-- Zod
-- i18next / react-i18next
-- Expo SQLite
-
-Initial Redux slices:
-
-- `settingsSlice`
-- `sessionSlice`
-- `uiSlice`
-
-## Development Rules
-
-- Keep shared persisted contracts versioned with `V1`.
-- Keep password generation independent from React Native, Expo, storage, and UI code.
-- Use `Result` objects for expected domain errors instead of throwing.
-- Do not commit generated build output, TypeScript build info, environment files, signing keys, vault files, or real secrets.
-
-## Next Steps
-
-- Commit the completed shared-types, crypto-core, password-core, and mobile foundation work in clean logical commits.
-- Remove or fix any stale scripts that point to deleted files.
-- Select and test a real Expo-compatible crypto implementation.
-- Build vault storage repositories and mobile screens using the shared contracts.
+- authenticated encryption works correctly on Android
+- tamper detection works on Android
+- the master password uses a real password KDF such as Argon2id
+- no fake or placeholder crypto remains
+- no secrets are stored in Redux or logs
+- all repository and service layers pass typecheck and tests
