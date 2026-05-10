@@ -189,7 +189,7 @@ export class VaultSession {
 
         if(!decryptResult.ok){
             return this.cryptoError(
-        "Failed to derive master password key.",
+        "Failed to decrypt root vault key.",
         decryptResult.error,
         );
         }
