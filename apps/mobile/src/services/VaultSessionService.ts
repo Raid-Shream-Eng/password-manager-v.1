@@ -1,15 +1,7 @@
-import type {
-    Result,
-    VaultHeaderV1
-} from "@password-manager/shared-types";
-import type { CryptoProvider } from "@password-manager/crypto-core";
-import {
-    base64ToBytes,
-    bytesToUtf8,
-    utf8ToBytes
-} from "@password-manager/crypto-core";
+import type { Result, VaultHeaderV1 } from "@password-manager/shared-types";
+import type { CryptoProvider, CryptoError } from "@password-manager/crypto-core";
+import { base64ToBytes, bytesToUtf8, utf8ToBytes } from "@password-manager/crypto-core";
 import { VaultHeaderRepository } from "../repositories/VaultHeaderRepository";
-import { codegenNativeCommands } from "react-native";
 
 export type UnlockedVaultSession = {
     vaultId: string;
@@ -46,6 +38,7 @@ export class VaultSession {
             value: this.session,
         };
     }
+
 
     async hasVault() : Promise<Result<boolean>>{
         const headerResult = await this.vaultHeaderRepository.get();
@@ -93,7 +86,8 @@ export class VaultSession {
                 ok:false,
                 error:{
                     code: "WRONG_MASTER_PASSWORD",
-                    message: "Wrong master password"
+                    message: "Wrong master password",
+                    cause: rootVaultKeyResult.error,
                 },
             };
         }
@@ -105,8 +99,13 @@ export class VaultSession {
         });
 
         if (!vaultEncyptionKeyResult.ok){
-            return vaultEncyptionKeyResult;
+            return this.cryptoError(
+                "Failed to derive vault encryption key.",
+                vaultEncyptionKeyResult.error,
+            );
         }
+
+
         const passwordGenerationKeyResult =await this.crypto.hkdfSha256({
             inputKeyMaterial: rootVaultKeyResult.value,
             salt: utf8ToBytes(header.vaultId),
@@ -115,7 +114,10 @@ export class VaultSession {
         });
 
         if(!passwordGenerationKeyResult.ok){
-            return passwordGenerationKeyResult;
+            return this.cryptoError(
+            "Failed to derive password generation key.",
+            passwordGenerationKeyResult.error,
+            );
         }
 
         this.session = {
@@ -158,12 +160,19 @@ export class VaultSession {
         * I will Overwrite Argon2id over it once the chosen KDF package passes Expo comatibility.
         * 
         */
-       return this.crypto.hkdfSha256({
+       const result = await this.crypto.hkdfSha256({
         inputKeyMaterial:utf8ToBytes(masterPassword),
         salt:base64ToBytes(header.kdf.salt),
         info:utf8ToBytes("master-password-key"),
         length:32,
        });
+       if (!result.ok){
+        return this.cryptoError(
+        "Failed to derive master password key.",
+        result.error,
+      );
+       }
+       return result;
     }
 
     private async decryptRootVaultKey(
@@ -178,7 +187,24 @@ export class VaultSession {
             algorithm: header.keyEnvelope.encryptionAlgorithm,
         });
 
+        if(!decryptResult.ok){
+            return this.cryptoError(
+        "Failed to derive master password key.",
+        decryptResult.error,
+        );
+        }
+
         return decryptResult;
+    }
+    private cryptoError<T>(message: string, cause: CryptoError): Result<T>{
+        return{
+            ok: false,
+            error:{
+                code:"CRYPTO_ERROR",
+                message,
+                cause,
+            }
+        }
     }
 
     private zeroBytes(bytes:Uint8Array): void{
