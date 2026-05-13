@@ -72,11 +72,15 @@ import {
          usernameOrEmail: input.usernameOrEmail,
          passwordProfile: input.passwordProfile,
          passwordHistory: [],
-         notes:  input.notes,
          lastUsedAt: null,
          createdAt: now,
-         updatedAt: now
-      };
+         updatedAt: now,
+         };
+
+      if (input.notes !== undefined) {
+         payload.notes = input.notes;
+      }
+
       const encryptedResult = await this.encryptPayload(payload);
 
       if (!encryptedResult.ok){
@@ -164,14 +168,14 @@ import {
       return this.decryptRecords(recordsResult.value);
    }
 
-   async listDeletedItem(): Promise<Result<DecryptedVaultItemV1[]>>{
+   async listDeletedItems(): Promise<Result<DecryptedVaultItemV1[]>>{
       const sessionResult = this.vaultSessionService.getSession();
 
       if (!sessionResult.ok) {
          return sessionResult;
       }
 
-      const recordsResult = await this.vaultRecordRepository.listActive();
+      const recordsResult = await this.vaultRecordRepository.listDeleted();
 
       if (!recordsResult.ok){
          return recordsResult;
@@ -181,10 +185,10 @@ import {
    }
 
    async updateItem(
-      input: UpdateVaultItemInput
+      input: UpdateVaultItemInput,
+
    ): Promise<Result<DecryptedVaultItemV1>>{
       const sessionResult = this.vaultSessionService.getSession();
-
       if (!sessionResult.ok) {
          return sessionResult;
       }
@@ -205,12 +209,15 @@ import {
          };
       }
       const now = new Date().toISOString();
+      const { notes, ...payloadWithoutNotes } = input.payload;
 
       const updatedPayload: VaultItemPayloadV1 = {
-         ...input.payload,
+         ...payloadWithoutNotes,
          updatedAt: now,
       };
-
+      if (notes !== undefined) {
+            updatedPayload.notes = notes;
+         }
       const encryptedResult = await this.encryptPayload(updatedPayload);
 
       if (!encryptedResult.ok) {
@@ -218,7 +225,7 @@ import {
       }
       const updatedRecord: LocalVaultRecordV1 = {
          ...existingResult.value,
-
+         encryptionAlgorithm: encryptedResult.value.encryptionAlgorithm,
          encryptedPayload: encryptedResult.value.encryptedPayload,
          nonce: encryptedResult.value.nonce,
          updatedAt: now,
@@ -288,12 +295,14 @@ import {
             },
          };
       }
+      // takes deletedAt out and puts everything else into activeRecord.
+      const { deletedAt, ...activeRecord } = recordResult.value;
 
       const updatedRecord: LocalVaultRecordV1 = {
-         ...recordResult.value,
-
-         updatedAt: new Date().toISOString(),
+      ...activeRecord,
+      updatedAt: new Date().toISOString(),
       };
+
       return this.vaultRecordRepository.update(updatedRecord);
    }
    async permanentlyDeleteItem(id: string):Promise<Result<void>>{

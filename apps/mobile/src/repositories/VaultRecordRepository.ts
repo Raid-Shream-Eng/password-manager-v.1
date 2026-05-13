@@ -11,6 +11,7 @@ export class VaultRecordRepository{
                 id,
                 schemaVersion,
                 encryptionVersion,
+                encryptionAlgorithm,
                 encryptedPayload,
                 nonce,
                 createdAt,

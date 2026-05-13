@@ -14,7 +14,7 @@ export type VaultItemPayloadV1 = {
     usernameOrEmail: string;
     passwordProfile: PasswordProfileV1;
     passwordHistory: PasswordVersionHistoryItemV1[];
-    notes?: any ;
+    notes?: string ;
     lastUsedAt?: string | null;
     createdAt: string;
     updatedAt: string;
