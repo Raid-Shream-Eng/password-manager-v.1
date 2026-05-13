@@ -26,6 +26,7 @@ export async function initializeDatabase():Promise<void>{
         id TEXT PRIMARY KEY NOT NULL,
         schemaVersion INTEGER NOT NULL,
         encryptionVersion INTEGER NOT NULL,
+        encryptionAlgorithm TEXT NOT NULL,
         encryptedPayload TEXT NOT NULL,
         nonce TEXT NOT NULL,
         createdAt TEXT NOT NULL,

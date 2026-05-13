@@ -16,12 +16,13 @@ export class VaultRecordRepository{
                 createdAt,
                 updatedAt,
                 deletedAt)
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?);
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);
                 `,
                 [
                     record.id,
                     record.schemaVersion,
                     record.encryptionVersion,
+                    record.encryptionAlgorithm,
                     record.encryptedPayload,
                     record.nonce,
                     record.createdAt,
@@ -131,6 +132,7 @@ export class VaultRecordRepository{
                 SET
                   schemaVersion = ?,
                   encryptionVersion = ?,
+                  encryptionAlgorithm = ?,
                   encryptedPayload = ?,
                   nonce = ?,
                   updatedAt = ?,
@@ -139,6 +141,7 @@ export class VaultRecordRepository{
                 [
                     record.schemaVersion,
                     record.encryptionVersion,
+                    record.encryptionAlgorithm,
                     record.encryptedPayload,
                     record.nonce,
                     record.updatedAt,

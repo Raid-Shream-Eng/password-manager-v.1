@@ -3,6 +3,7 @@ import type { CryptoError, CryptoProvider } from "@password-manager/crypto-core"
 import { bytesToBase64, utf8ToBytes } from "@password-manager/crypto-core";
 import { VaultHeaderRepository } from "../repositories/VaultHeaderRepository";
 
+
 export class VaultCreationService{
     constructor(
         private readonly vaultHeaderRepository: VaultHeaderRepository,
@@ -14,7 +15,7 @@ export class VaultCreationService{
         if (!existingHeader.ok) {
             return existingHeader;
         }
-        if (existingHeader) {
+        if (existingHeader.value) {
             return{
                 ok:false,
                 error:{

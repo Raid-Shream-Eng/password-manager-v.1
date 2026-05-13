@@ -1,6 +1,6 @@
 import type { Result, VaultHeaderV1 } from "@password-manager/shared-types";
 import type { CryptoProvider, CryptoError } from "@password-manager/crypto-core";
-import { base64ToBytes, bytesToUtf8, utf8ToBytes } from "@password-manager/crypto-core";
+import { base64ToBytes, utf8ToBytes } from "@password-manager/crypto-core";
 import { VaultHeaderRepository } from "../repositories/VaultHeaderRepository";
 
 export type UnlockedVaultSession = {
@@ -64,7 +64,7 @@ export class VaultSessionService {
                 ok: false,
                 error:{
                     code:"VAULT_NOT_FOUND",
-                    message:"",
+                    message:"No local vault exists.",
                 },
             };
         }
