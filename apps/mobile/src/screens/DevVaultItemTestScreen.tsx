@@ -26,8 +26,7 @@ export function DevVaultItemTestScreen(){
 
         setLastItemId(result.value.id);
         {
-        Alert.alert("No item created yet");
-        return;    
+            Alert.alert("Created", result.value.id);  
         }
     }
     async function handleReadTestItem() {
@@ -43,7 +42,7 @@ export function DevVaultItemTestScreen(){
             return;
         }
 
-        if (result.value) {
+        if (!result.value) {
             Alert.alert("Not Found");
             return;
         }
@@ -63,6 +62,17 @@ export function DevVaultItemTestScreen(){
         Alert.alert("Active Items", String(result.value.length));
     }
 
+        async function handleLockVault() {
+        const result = services.vaultSessionService.lock();
+
+        if (!result.ok) {
+            Alert.alert("Error", result.error.code);
+            return;
+        }
+
+        Alert.alert("Locked", "Now try reading the last item again.");
+    }
+
     return(
         <View style={Style.TestContainer}>
             <Text style={Style.TestTitle}>Dev Vault Item Test</Text>
@@ -70,7 +80,7 @@ export function DevVaultItemTestScreen(){
             <CustomButton title="Create Test Item" onPress={handleCreateTestItem}/>
             <CustomButton title="Read Last Item" onPress={handleReadTestItem}/>
             <CustomButton title="ListTestItem" onPress={handleListTestItem}/>
-
+            <CustomButton title="Lock Vault" onPress={handleLockVault}/>
         </View>
     )
 }  

@@ -10,7 +10,6 @@ import {
     bytesToUtf8,
     utf8ToBytes
  } from "@password-manager/crypto-core";
- import {v4 as uuidv4} from "uuid";
  import { VaultRecordRepository } from "../repositories/VaultRecordRepository";
  import { VaultSessionService } from "./VaultSessionService";
 
@@ -88,7 +87,7 @@ import {
       }
 
       const record: LocalVaultRecordV1 = {
-         id: uuidv4(),
+         id: this.createRecrdId(),
          schemaVersion:1,
          encryptionVersion:1,
          encryptionAlgorithm: encryptedResult.value.encryptionAlgorithm,
@@ -112,6 +111,7 @@ import {
       },
      };
    }
+   
    
  
 
@@ -389,7 +389,7 @@ import {
             ok: false,
             error:{
                code: "ENCRYPTION_FAILED",
-               message:"",
+               message:"Failed to encrypt vault item payload.",
                cause: encryptedResult.error,
             },
          };
@@ -425,7 +425,7 @@ import {
          return{ok:false,
             error:{
                code: "DECRYPTION_FAILED",
-               message:"",
+               message:"Failed to decrypt vault item payload.",
                cause: decryptedResult.error,
             },
          };
@@ -459,6 +459,16 @@ import {
          };
       }
    }
+
+   private createRecrdId(): string{
+      const result = this.crypto.randomBytes(16);
+
+      if(!result.ok){
+         return `record-${Date.now()}`;
+      }
+
+      return `record-${bytesToBase64(result.value).replaceAll("+","-").replaceAll("/","_").replaceAll("=","")}`;
+   }
 }
 
    function  normalizeUsername(value: string):string {
@@ -479,4 +489,5 @@ import {
          return first.generationLabel === second.generationLabel;
       }
       return false;
+
    }
