@@ -1,9 +1,10 @@
+export type VaultRecordEncryptionAlgorithm  = "XChaCha20-Poly1305";
 export type LocalVaultRecordV1 = {
     id: string;
     schemaVersion: 1;
     encryptionVersion: 1;
 
-    encryptionAlgorithm:  "XChaCha20-Poly1305";
+    encryptionAlgorithm:  VaultRecordEncryptionAlgorithm;
 
     encryptedPayload: string;
     nonce: string;

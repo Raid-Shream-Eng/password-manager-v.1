@@ -9,7 +9,7 @@ type ButtonProps = {
   disabled?: boolean | undefined;
   fontWeight?: "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900" | "black" | "thin" | "ultralight" | "condensed" | "bold" | "heavy" | "medium" | "light" | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ; 
 };
-const CustomButton = (Props:ButtonProps) => {
+export const CustomButton = (Props:ButtonProps) => {
   return (
   <Pressable disabled={Props.disabled} style={{}}>
     <View style={[style.ButtonContainer,{backgroundColor: Props.backgroundColor}]}>
@@ -20,5 +20,3 @@ const CustomButton = (Props:ButtonProps) => {
   </Pressable>
   )
 };
-
-export default CustomButton;

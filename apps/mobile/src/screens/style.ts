@@ -36,4 +36,15 @@ export default StyleSheet.create({
         fontWeight:"200"
     },
 
+    TestContainer: {
+        flex: 1,
+        padding: 24,
+        gap: 12,
+        justifyContent: "center",
+    },
+    TestTitle: {
+        fontSize: 22,
+        fontWeight: "700",
+        marginBottom: 16,
+    },
 })

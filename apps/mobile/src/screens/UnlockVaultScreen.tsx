@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert,Button,Pressable,StyleSheet,Text,TextInput,View } from "react-native";
 import style from "./style";
-import CustomButton from "../components/masterPasswordScreen/customButton";
+import CustomButton from "../components/Customs/customButton";
 
 type Props = {
     onUnlock: (masterPassword:string)=>Promise<void>
