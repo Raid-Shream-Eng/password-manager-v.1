@@ -241,6 +241,11 @@ export function VaultItemDetailsScreen({ route, navigation }: Props) {
         />
 
         <CustomButton
+          title="Edit"
+          onPress={() => navigation.navigate("EditVaultItem", { itemId })}
+        />
+
+        <CustomButton
           title="Delete"
           onPress={handleSoftDelete}
           backgroundColor="#aa0000"

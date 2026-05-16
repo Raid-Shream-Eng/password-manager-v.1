@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { GeneratorService } from "../services/GeneratorService";
 
 export default StyleSheet.create({
     input:{
@@ -174,5 +173,10 @@ export default StyleSheet.create({
   },
   VaultListScreenError: {
     color: "#b00020",
+  },
+  RecentlyDeletedActions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 10,
   },
 })

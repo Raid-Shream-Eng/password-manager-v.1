@@ -65,8 +65,14 @@ export function VaultListScreen({ navigation }: Props) {
       />
 
       <Button title="Add Item" onPress={handleAddItem} />
+      <Button
+        title="Recently Deleted"
+        onPress={() => navigation.navigate("RecentlyDeleted")}
+      />
 
-      {errorCode && <Text style={Style.VaultListScreenError}>Error: {errorCode}</Text>}
+      {errorCode && (
+        <Text style={Style.VaultListScreenError}>Error: {errorCode}</Text>
+      )}
 
       <FlatList
         data={filteredItems}
@@ -101,7 +107,9 @@ function VaultListRow({ item, onPress }: VaultListRowProps) {
     <TouchableOpacity style={Style.VaultListScreenRow} onPress={onPress}>
       <Text style={Style.VaultListScreenRowTitle}>{site.displayName}</Text>
       <Text style={Style.VaultListScreenRowSubtitle}>{target}</Text>
-      <Text style={Style.VaultListScreenRowSubtitle}>{item.payload.usernameOrEmail}</Text>
+      <Text style={Style.VaultListScreenRowSubtitle}>
+        {item.payload.usernameOrEmail}
+      </Text>
     </TouchableOpacity>
   );
 }
