@@ -40,9 +40,9 @@ export function GeneratedPasswordResultScreen({route, navigation}: Props){
     const generate = useCallback(async ()=> {
         setIsGenerating(true);
             try {
-            const result = await services.generatorService.generateFormInput(
-                generationInput,
-            );
+           const result = await services.generatorService.generateFromInput(
+  generationInput,
+);
 
             if (!result.ok) {
                 Alert.alert("Generation failed", result.error.code);

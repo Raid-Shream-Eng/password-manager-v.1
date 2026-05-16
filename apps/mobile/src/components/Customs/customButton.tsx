@@ -11,7 +11,7 @@ type ButtonProps = {
 };
 export const CustomButton = (Props:ButtonProps) => {
   return (
-  <Pressable disabled={Props.disabled} onPress={Props.onPress}  style={{padding:10, margin:10,alignItems:'center',justifyContent:'center'}}>
+  <Pressable disabled={Props.disabled} onPress={Props.onPress}  style={{padding:1, margin:1,alignItems:'center',justifyContent:'center'}}>
     <View style={[style.ButtonContainer,{backgroundColor: Props.backgroundColor}]}>
         <Text style={{fontWeight: Props.fontWeight,color:Props.color}}>
             {Props.title}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 import { CreateMasterPasswordScreen } from "../src/screens/CreateMasterPasswordScreen";
 import { GeneratedPasswordResultScreen } from "../src/screens/GeneratedPasswordResultScreen";
 import { QuickGeneratorScreen } from "../src/screens/QuickGeneratorScreen";
@@ -140,8 +140,8 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffcb87" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#ffcb87" }}>
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
-    </View>
+    </ScrollView>
   );
 }

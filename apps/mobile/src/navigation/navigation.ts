@@ -23,6 +23,10 @@ export type VaultItemDetailsParams = {
   itemId: string;
 };
 
+export type EditVaultItemParams = {
+  itemId: string;
+};
+
 export type UnlockedStackParamList = {
   Home: undefined;
   QuickGenerator: undefined;
@@ -30,4 +34,6 @@ export type UnlockedStackParamList = {
   SaveGeneratedProfile: SaveGeneratedProfileParams;
   VaultList: undefined;
   VaultItemDetails: VaultItemDetailsParams;
+  EditVaultItem: EditVaultItemParams;
+  RecentlyDeleted: undefined;
 };

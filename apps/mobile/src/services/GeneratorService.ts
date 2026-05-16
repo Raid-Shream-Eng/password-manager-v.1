@@ -8,7 +8,7 @@ export class GeneratorService{
         private readonly vaultSessionService: VaultSessionService,
         private readonly crypto: CryptoProvider
     ) {}
-    async generateFormInput(
+    async generateFromInput(
         input: PasswordGenerationInputV1
     ): Promise<Result<string>>{
     const sessionResult = this.vaultSessionService.getSession();
