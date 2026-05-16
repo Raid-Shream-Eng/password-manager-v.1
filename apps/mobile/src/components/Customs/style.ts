@@ -9,6 +9,7 @@ export default StyleSheet.create({
         backgroundColor:"#235241"
     },
     ButtonText:{
+        textAlign:'center',
         fontSize:18,
         fontWeight:'500',
         color:"#fffedb"

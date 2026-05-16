@@ -320,7 +320,19 @@ export function  QuickGeneratorScreen({navigation}: Props){
             }
             />
 
-            <CustomButton title="Generate" onPress={handleSubmit(onSubmit)}/>
+            <CustomButton
+                title="Generate"
+                onPress={handleSubmit(
+                    onSubmit,
+                    (errors) => {
+                    console.log(errors);
+                    Alert.alert("Form error", JSON.stringify(errors));
+                    },
+                )}
+                backgroundColor="#000"
+                fontWeight="700"
+                color="#fff"
+            />
         </ScrollView>
     );
 }

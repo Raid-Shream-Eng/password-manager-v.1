@@ -91,4 +91,52 @@ export default StyleSheet.create({
         fontSize: 13,
         color: "#555",
     },
+    GeneratedPasswordResultContainer: {
+    flex: 1,
+    padding: 24,
+    gap: 16,
+  },
+  GeneratedPasswordResultTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+  },
+  GeneratedPasswordResultCard: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 16,
+    gap: 6,
+  },
+  GeneratedPasswordResultLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#666",
+  },
+  GeneratedPasswordResultValue: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  GeneratedPasswordResultPasswordBox: {
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+  },
+  GeneratedPasswordResultPasswordText: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  GeneratedPasswordResultCopiedText: {
+    fontSize: 14,
+    color: "#555",
+  },
+  GeneratedPasswordResultActions: {
+    gap: 10,
+  },
+  GeneratedPasswordResultWarning: {
+    marginTop: 16,
+    fontSize: 13,
+    color: "#555",
+  },
 })

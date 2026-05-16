@@ -16,9 +16,10 @@ export class GeneratorService{
     if (!sessionResult.ok) {
         return sessionResult;
     }
+    const session = sessionResult.value;
     const result = await generatePassword({
         input,
-        passwordGenerationKey: sessionResult.value.passwordGenerationKey,
+        passwordGenerationKey: session.passwordGenerationKey,
         crypto: {
             hmacSha256: async (key, message) => {
                 const hmacResult = await this.crypto.hmacSha256(key, message);
