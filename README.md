@@ -75,7 +75,7 @@ For the MVP, I started using Expo-compatible crypto tools and noble libraries. T
 
 This is the Expo React Native app.
 
-Right now, it contains the basic app foundation, Redux setup, and the start of the local SQLite repository layer.
+Right now, it contains the local vault flow, repository layer, vault session service, encrypted vault item service, quick generator screen, and generated password result screen.
 
 The mobile app will eventually handle:
 
@@ -84,11 +84,12 @@ The mobile app will eventually handle:
 - storing encrypted vault records
 - showing saved passwords
 - generating passwords
+- copying generated passwords with a clipboard timeout
 - managing settings
 
 ## Current Progress
 
-So far, I have worked on the foundation layers first.
+So far, I have worked on the foundation layers first, then started connecting them inside the mobile app.
 
 Completed or started:
 
@@ -99,7 +100,26 @@ Completed or started:
 - Added tests for password normalization, validation, mapping, and generation.
 - Added a real crypto provider structure in `crypto-core`.
 - Added HMAC, HKDF, random bytes, and authenticated encryption support.
-- Started the SQLite repository layer in the mobile app.
+- Built the SQLite repository layer in the mobile app.
+- Built vault creation and unlock services.
+- Added an in-memory vault session service.
+- Added encrypted vault item create/read/list test flow.
+- Added the quick generator screen.
+- Added the generated password result screen.
+- Added clipboard timeout behavior for generated passwords.
+- Added a temporary app screen switch so I can manually test the MVP flow before building the final navigation.
+
+Current manual app flow:
+
+```text
+Create vault if needed
+Unlock vault
+Quick Generator
+Generated Password Result
+Copy or reveal generated password
+```
+
+The app also has a temporary dev vault item test screen that I used to confirm encrypted vault item create/read/list behavior.
 
 ## Security Rules I Am Following
 
@@ -133,11 +153,11 @@ These values should only live in memory for as long as they are needed.
 
 ## Local Storage Plan
 
-For local storage, I am building a repository layer around Expo SQLite.
+For local storage, I am using a repository layer around Expo SQLite.
 
 The goal is that screens and services should not write SQL directly. Instead, they should use repository classes.
 
-The planned tables are:
+The current tables are:
 
 ```text
 vault_header
@@ -146,7 +166,23 @@ history_records
 app_settings
 ```
 
-The vault records will only store encrypted data, not decrypted passwords or notes.
+The vault records store encrypted payloads, nonces, encryption version, and encryption algorithm metadata. Plaintext vault item data should not be stored in SQLite.
+
+## Password Generation Flow
+
+The quick generator does not generate or save the password itself. It collects the user inputs and builds a `PasswordGenerationInputV1`.
+
+Important rules I am following:
+
+- `displayName` does not affect the generated password.
+- notes do not affect the generated password.
+- timestamps do not affect the generated password.
+- normalized domain affects the generated password.
+- generation label affects the generated password.
+- username/email affects the generated password.
+- password profile and password version affect the generated password.
+
+The generated password result screen uses the unlocked session's `passwordGenerationKey` to generate the password. The password is hidden by default, can be copied while hidden, and is cleared from local screen state when the clipboard timeout runs or when the screen unmounts.
 
 ## Commands
 
@@ -172,20 +208,19 @@ pnpm.cmd --filter mobile typecheck
 Run the mobile app:
 
 ```powershell
-pnpm.cmd --filter mobile start
+pnpm.cmd --filter mobile start -- --clear
 ```
 
 ## What I Need To Do Next
 
 The next steps are:
 
-- Finish the SQLite repositories.
-- Add `SettingsRepository`.
-- Add `HistoryRecordRepository` or decide to defer it clearly.
-- Build `VaultSessionService`.
-- Build `VaultCreationService`.
-- Connect create-vault and unlock-vault screens.
-- Manually test the crypto provider inside Expo and Android.
+- Finish replacing the temporary app screen switch with real navigation.
+- Add the save-generated-profile flow.
+- Add the real saved vault item UI.
+- Add automated service tests for encrypted vault item behavior.
+- Add automated tests for wrong-key and tamper-detection behavior.
+- Manually test the crypto provider inside Expo and Android APK builds.
 - Replace any temporary password KDF placeholder with a real password KDF before real use.
 
 ## Current Limitations
@@ -200,3 +235,5 @@ Before real use, I still need to make sure:
 - no fake or placeholder crypto remains
 - no secrets are stored in Redux or logs
 - all repository and service layers pass typecheck and tests
+- generated passwords are not saved to Redux, SQLite, logs, navigation params, or crash reports
+- the temporary testing screens are replaced by production navigation and screens
