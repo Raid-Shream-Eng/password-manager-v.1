@@ -4,10 +4,10 @@ import { VaultCreationService } from "../services/VaultCreationService";
 
 export const quickGeneratorSchema = z.object({
     identifierType: z.enum(["domain","label"]),
-    desplayName: z.string().min(1, "Display or email is required."),
+    displayName: z.string().min(1, "Display or email is required."),
     domainInput: z.string().optional(),
     labelInput: z.string().optional(),
-    userNameOrEmail: z.string().min(1, "Username or E-mail is requaired."),
+    usernameOrEmail: z.string().min(1, "Username or E-mail is requaired."),
     passwordProfile: passwordProfileV1Schema,
 }).superRefine((Value , ctx)=> {
     if (Value.identifierType === "domain") {

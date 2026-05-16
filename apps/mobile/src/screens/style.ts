@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { GeneratorService } from "../services/GeneratorService";
 
 export default StyleSheet.create({
     input:{
@@ -46,5 +47,48 @@ export default StyleSheet.create({
         fontSize: 22,
         fontWeight: "700",
         marginBottom: 16,
+    },
+    QuuickGeneratorContainer: {
+        padding: 24,
+        gap: 10,
+    },
+    QuuickGeneratorLitle: {
+        fontSize: 26,
+        fontWeight: "700",
+        marginBottom: 12,
+    },
+    QuuickGeneratorSectionTitle: {
+        fontSize: 20,
+        fontWeight: "700",
+        marginTop: 20,
+        marginBottom: 8,
+    },
+    QuuickGeneratorLabel: {
+        fontSize: 14,
+        fontWeight: "600",
+        marginTop: 8,
+    },
+    QuuickGeneratorInput: {
+        borderWidth: 1,
+        borderColor: "#999",
+        borderRadius: 8,
+        padding: 12,
+    },
+    QuuickGeneratorRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+    QuuickGeneratorSwitchRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingVertical: 8,
+    },
+    QuuickGeneratorError: {
+        color: "#b00020",
+    },
+    QuuickGeneratorPreview: {
+        fontSize: 13,
+        color: "#555",
     },
 })

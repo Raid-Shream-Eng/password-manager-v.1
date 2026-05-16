@@ -4,6 +4,7 @@ import { VaultRecordRepository } from "../repositories/VaultRecordRepository";
 import { VaultCreationService } from "./VaultCreationService";
 import { VaultSessionService } from "./VaultSessionService";
 import { VaultItemService } from "./VaultItemService";
+import { GeneratorService } from "./GeneratorService";
 
 const crypto = createCryptoProvider();
 
@@ -28,4 +29,6 @@ export const services = {
         vaultRecordRepository,
         crypto
     ),
+
+    generatorService: new GeneratorService(vaultSessionService, crypto),
 };
