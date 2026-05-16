@@ -139,4 +139,40 @@ export default StyleSheet.create({
     fontSize: 13,
     color: "#555",
   },
+  VaultListScreenContainer: {
+    flex: 1,
+    padding: 24,
+    gap: 12,
+  },
+  VaultListScreenTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+  },
+  VaultListScreenSearchInput: {
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRadius: 8,
+    padding: 12,
+  },
+  VaultListScreenRow: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingVertical: 14,
+  },
+  VaultListScreenRowTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  VaultListScreenRowSubtitle: {
+    fontSize: 13,
+    color: "#555",
+    marginTop: 3,
+  },
+  VaultListScreenEmpty: {
+    marginTop: 24,
+    color: "#555",
+  },
+  VaultListScreenError: {
+    color: "#b00020",
+  },
 })
