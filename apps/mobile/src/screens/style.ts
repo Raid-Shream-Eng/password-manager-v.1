@@ -13,7 +13,6 @@ export default StyleSheet.create({
         fontWeight:"600"
     },
     container: {
-    flex: 1,
     padding: 24,
     justifyContent: "center",
     },
@@ -38,7 +37,6 @@ export default StyleSheet.create({
     },
 
     TestContainer: {
-        flex: 1,
         padding: 24,
         gap: 12,
         justifyContent: "center",
@@ -92,7 +90,7 @@ export default StyleSheet.create({
         color: "#555",
     },
     GeneratedPasswordResultContainer: {
-    padding: 24,
+    padding: 20,
     gap: 16,
   },
   GeneratedPasswordResultTitle: {
@@ -139,7 +137,6 @@ export default StyleSheet.create({
     color: "#555",
   },
   VaultListScreenContainer: {
-    flex: 1,
     padding: 24,
     gap: 12,
   },

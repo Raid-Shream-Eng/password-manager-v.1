@@ -30,7 +30,6 @@ function ScreenFrame({ children }: { children: React.ReactNode }) {
 
 const styles = StyleSheet.create({
   screenFrame: {
-    flex: 1,
     paddingVertical: 24,
     paddingHorizontal: 15,
     marginBottom:10,
@@ -263,7 +262,6 @@ const editVaultItemNavigation = {
     return (
       <View
         style={{
-          flex: 1,
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#ffcb87",
@@ -366,7 +364,7 @@ if (screen === "recently-deleted") {
   <>
     {header}
      <ScreenFrame>
-    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: "#ffcb87" }}>
+    <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: "#ffcb87" }}>
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
     </ScrollView></ScreenFrame>
   </>

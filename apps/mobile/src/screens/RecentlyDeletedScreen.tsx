@@ -115,7 +115,6 @@ function DeletedItemRow({item,onRestore,onPermanentDelete}:DeletedItemRowProps) 
 
 const Styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 24,
     gap: 12,
   },

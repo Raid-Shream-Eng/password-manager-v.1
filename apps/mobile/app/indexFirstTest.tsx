@@ -95,7 +95,7 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffcb87" }}>
+    <View style={{ backgroundColor: "#ffcb87" }}>
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
     </View>
   );

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Button, Text, View } from "react-native";
+import { Alert, Button, ScrollView, Text, View } from "react-native";
 import { CustomButton } from "../components/Customs/customButton";
 import Style from './style';
 import  { useClipboardTimeout } from "../hooks/useClipboardTimeout";
@@ -91,7 +91,7 @@ export function GeneratedPasswordResultScreen({route, navigation}: Props){
     site.kind === "domain" ? site.normalizedDomain : site.generationLabel;
 
     return(
-        <View style={Style.GeneratedPasswordResultContainer}>
+        <ScrollView style={Style.GeneratedPasswordResultContainer}>
             <Text style={Style.GeneratedPasswordResultTitle}>Generated Password</Text>
 
             <View style={Style.GeneratedPasswordResultCard}>
@@ -142,6 +142,6 @@ export function GeneratedPasswordResultScreen({route, navigation}: Props){
                     this password can be regenerated only with the same Master Password, identifier, username, rules, and version.
                 </Text>
            
-        </View>
+        </ScrollView>
     );
 }
