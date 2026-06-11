@@ -239,6 +239,11 @@ export function VaultItemDetailsScreen({ route, navigation }: Props) {
           onPress={handleRevealToggle}
           disabled={!generatedPassword || isGenerating}
         />
+        
+        <CustomButton
+          title="Edit"
+          onPress={() => navigation.navigate("EditVaultItem", { itemId })}
+        />
 
         <CustomButton
           title="Delete"

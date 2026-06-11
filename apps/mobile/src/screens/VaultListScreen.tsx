@@ -11,6 +11,7 @@ import {
 import { useVaultItems } from "../hooks/useVaultItems";
 import type { DecryptedVaultItemV1 } from "../services/VaultItemService";
 import Style from "./style";
+import { CustomButton } from "../components/Customs/customButton";
 
 type Props = {
   navigation: {
@@ -82,6 +83,11 @@ export function VaultListScreen({ navigation }: Props) {
         renderItem={({ item }) => (
           <VaultListRow item={item} onPress={() => handleOpenItem(item)} />
         )}
+      />
+      
+      <CustomButton
+        title="Recently Deleted"
+        onPress={() => navigation.navigate("RecentlyDeleted")}
       />
     </View>
   );
