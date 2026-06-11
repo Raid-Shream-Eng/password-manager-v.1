@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
+import { Stack } from "expo-router";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { CreateMasterPasswordScreen } from "../src/screens/CreateMasterPasswordScreen";
 import { GeneratedPasswordResultScreen } from "../src/screens/GeneratedPasswordResultScreen";
 import { QuickGeneratorScreen } from "../src/screens/QuickGeneratorScreen";
@@ -23,6 +24,18 @@ type ScreenState =
   | "vault-details"
   | "edit-vault-item"
   | "recently-deleted";
+function ScreenFrame({ children }: { children: React.ReactNode }) {
+  return <View style={styles.screenFrame}>{children}</View>;
+}
+
+const styles = StyleSheet.create({
+  screenFrame: {
+    flex: 1,
+    paddingVertical: 24,
+    paddingHorizontal: 15,
+    marginBottom:10,
+  },
+});
 
 export default function Index() {
   const [generatedResultParams, setGeneratedResultParams] =
@@ -32,7 +45,17 @@ export default function Index() {
   const [vaultItemId, setVaultItemId] = useState<string | null>(null);
   const [screen, setScreen] = useState<ScreenState>("create");
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
- 
+   const screenTitle: Record<ScreenState, string> = {
+  create: "Create Vault",
+  unlock: "Unlock Vault",
+  "quick-generator": "Quick Generator",
+  "generated-result": "Generated Password",
+  "save-profile": "Save Profile",
+  "vault-list": "Vault",
+  "vault-details": "Vault Details",
+  "edit-vault-item": "Edit Vault Item",
+  "recently-deleted": "Recently Deleted",
+};
   useEffect(() => {
     async function prepareDatabase() {
       try {
@@ -55,7 +78,58 @@ export default function Index() {
 
     prepareDatabase();
   }, []);
+  function handleHeaderBack() {
+  if (screen === "quick-generator") {
+    setScreen("vault-list");
+    return;
+  }
 
+  if (screen === "generated-result") {
+    setGeneratedResultParams(null);
+    setScreen("quick-generator");
+    return;
+  }
+
+  if (screen === "save-profile") {
+    setScreen("generated-result");
+    return;
+  }
+
+  if (screen === "vault-details") {
+    setScreen("vault-list");
+    return;
+  }
+
+  if (screen === "edit-vault-item") {
+    setScreen("vault-details");
+    return;
+  }
+
+  if (screen === "recently-deleted") {
+    setScreen("vault-list");
+  }
+}
+const CanShowHeaderBack = screen !== "create" && screen !== "unlock" && screen !== "vault-list";
+
+const headerOptions = {
+  title: screenTitle[screen],
+  headerTitleAlign: "center" as const,
+  headerBackVisible: false,
+  ...(CanShowHeaderBack
+    ? {
+        headerLeft: () => (
+          <Pressable
+            onPress={handleHeaderBack}
+            style={{ paddingHorizontal: 12 }}
+          >
+            <Text style={{ fontSize: 16 }}>Back</Text>
+          </Pressable>
+        ),
+      }
+    : {}),
+};
+
+const header = <Stack.Screen options={headerOptions} />;
   async function handleCreateVault(masterPassword: string) {
     const result = await services.vaultCreationService.createVault(
       masterPassword,
@@ -203,62 +277,99 @@ const editVaultItemNavigation = {
 
   if (screen === "unlock") {
     return (
-      <UnlockVaultScreen
-        onUnlock={handleUnlock}
-        onResetVault={handleResetVault}
-      />
+    <>
+    {header} 
+      <ScreenFrame>
+        <UnlockVaultScreen
+          onUnlock={handleUnlock}
+          onResetVault={handleResetVault}
+        />
+      </ScreenFrame>
+    </>
     );
   }
 
   if (screen === "quick-generator") {
-    return <QuickGeneratorScreen navigation={quickGeneratorNavigation} />;
+    return <>
+     {header}
+      <ScreenFrame>
+         <QuickGeneratorScreen navigation={quickGeneratorNavigation} />
+      </ScreenFrame>
+    </>;
   }
 
   if (screen === "generated-result" && generatedResultParams) {
-    return (
+    return (<>
+    {header}
+     <ScreenFrame>
       <GeneratedPasswordResultScreen
         route={{ params: generatedResultParams }}
         navigation={generatedResultNavigation}
       />
+      </ScreenFrame>
+      </>
     );
   }
 
   if (screen === "vault-list") {
-    return <VaultListScreen navigation={vaultListNavigation} />;
+    return <>{header}<VaultListScreen navigation={vaultListNavigation} /></>;
   }
   if (screen === "save-profile" && saveProfileParams) {
-  return (
+  return (<>
+  {header}
+   <ScreenFrame>
     <SaveGeneratedProfileScreen
       route={{ params: saveProfileParams }}
       navigation={saveProfileNavigation}
     />
+    </ScreenFrame>
+    </>
   );
 }
 
 if (screen === "vault-details" && vaultItemId) {
-  return (
+  return (<>
+  {header}
+   <ScreenFrame>
     <VaultItemDetailsScreen
       route={{ params: { itemId: vaultItemId } }}
       navigation={vaultDetailsNavigation}
     />
+    </ScreenFrame>
+    </>
   );
 }
 
 if (screen === "edit-vault-item" && vaultItemId) {
   return (
+  <>
+  {header}
+   <ScreenFrame>
     <EditVaultItemScreen
       route={{ params: { itemId: vaultItemId } }}
       navigation={editVaultItemNavigation}
     />
+    </ScreenFrame>
+  </>
   );
 }
 
 if (screen === "recently-deleted") {
-  return <RecentlyDeletedScreen />;
+  const recentlyDeletedNavigation = {
+  goBack: () => {
+    setScreen("vault-list");
+  },
+};
+  return <>{header}<RecentlyDeletedScreen navigation={recentlyDeletedNavigation} /></>;
 }
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#ffcb87" }}>
+  <>
+    {header}
+     <ScreenFrame>
+    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, backgroundColor: "#ffcb87" }}>
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
-    </ScrollView>
+    </ScrollView></ScreenFrame>
+  </>
   );
+
 }

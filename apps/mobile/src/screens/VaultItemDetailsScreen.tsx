@@ -175,7 +175,7 @@ export function VaultItemDetailsScreen({ route, navigation }: Props) {
     generatedPassword && isRevealed ? generatedPassword : "********************";
 
   return (
-    <ScrollView contentContainerStyle={Style.GeneratedPasswordResultContainer}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={Style.GeneratedPasswordResultContainer}>
       <Text style={Style.GeneratedPasswordResultTitle}>{site.displayName}</Text>
 
       <View style={Style.GeneratedPasswordResultCard}>

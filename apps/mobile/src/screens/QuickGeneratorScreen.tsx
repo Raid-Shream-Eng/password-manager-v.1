@@ -124,7 +124,7 @@ export function  QuickGeneratorScreen({navigation}: Props){
 
 
     return(
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false} >
             <Text></Text>
             <Text></Text>
 

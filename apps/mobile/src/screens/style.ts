@@ -92,7 +92,6 @@ export default StyleSheet.create({
         color: "#555",
     },
     GeneratedPasswordResultContainer: {
-    flex: 1,
     padding: 24,
     gap: 16,
   },

@@ -133,15 +133,32 @@ export function EditVaultItemScreen({ route, navigation }: Props) {
             }
 
             const trimedNotes = values.notes?.trim();
+            const { notes: _oldNotes, ...payloadWithoutNotes } = item.payload;
             const updatedPayload: VaultItemPayloadV1 = {
-                ...item.payload,
+                ...payloadWithoutNotes,
                 site: siteResult.value,
                 usernameOrEmail: values.usernameOrEmail.trim(),
                 passwordProfile: values.passwordProfile,
-                ...(trimedNotes ? { notes: trimedNotes } : { notes: "Empty" }),
+                ...(trimedNotes ? { notes: trimedNotes } : {}),
             };
             const updateGenerationKey = buildGenerationIdentityKey(updatedPayload);
 
+            const duplicateResult = await services.vaultItemService.hasDuplicate({
+                site: updatedPayload.site,
+                usernameOrEmail: updatedPayload.usernameOrEmail,
+                excludeItemId: item.id,
+            });
+                if (!duplicateResult.ok) {
+                  Alert.alert("Duplicate check failed", duplicateResult.error.code);
+                  return;
+                }
+                if (duplicateResult.value) {
+                  Alert.alert(
+                    "Duplicate item",
+                    "Another item with this account identifier and username already exists.",
+                    );
+                    return;
+                }
             const passwordAffectingChange = 
             originalGenerationKey !== null &&
             originalGenerationKey !== updateGenerationKey;
@@ -165,25 +182,7 @@ export function EditVaultItemScreen({ route, navigation }: Props) {
                 );
                 return;
             }
-
-            const duplicateResult = await services.vaultItemService.hasDuplicate({
-        site: updatedPayload.site,
-        usernameOrEmail: updatedPayload.usernameOrEmail,
-        excludeItemId: item.id,
-        });
-
-        if (!duplicateResult.ok) {
-        Alert.alert("Duplicate check failed", duplicateResult.error.code);
-        return;
-        }
-
-        if (duplicateResult.value) {
-        Alert.alert(
-            "Duplicate item",
-            "Another item with this account identifier and username already exists."
-        );
-        return;
-        } 
+            
             await savePayload(updatedPayload);
         }
 
@@ -252,7 +251,7 @@ export function EditVaultItemScreen({ route, navigation }: Props) {
     );
   }
 return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
         <Text style={styles.title}>Edit Vault Item</Text>
 
         <Text style={styles.warning}>

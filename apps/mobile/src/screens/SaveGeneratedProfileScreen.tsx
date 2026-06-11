@@ -69,7 +69,7 @@ const result = await services.vaultItemService.createItem(
     site.kind === "domain" ? site.normalizedDomain : site.generationLabel;
 
   return (
-    <ScrollView contentContainerStyle={Style.GeneratedPasswordResultContainer}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={Style.GeneratedPasswordResultContainer}>
       <Text style={Style.GeneratedPasswordResultTitle}>Save Profile</Text>
 
       <View style={Style.GeneratedPasswordResultCard}>

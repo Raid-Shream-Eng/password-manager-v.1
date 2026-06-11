@@ -13,7 +13,13 @@ import { services } from '../services/serviceContainer';
 import { useDeletedVaultItems } from '../hooks/useDeletedVaultItems';
 import { CustomButton } from '../components/Customs/customButton';
 
-export function RecentlyDeletedScreen() {
+type Props = {
+  navigation: {
+    goBack: () => void;
+  };
+};
+
+export function RecentlyDeletedScreen({ navigation }:Props) {
     const { items, isLoading, errorCode, reload } = useDeletedVaultItems();
 
     async function handleRestore(item: DecryptedVaultItemV1) {
@@ -69,6 +75,7 @@ export function RecentlyDeletedScreen() {
                 />
             )}
             />
+            <CustomButton title="Back to Vault" onPress={navigation.goBack} />
         </View>
     );
 }
