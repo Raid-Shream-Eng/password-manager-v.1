@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
-import { GeneratorService } from "../services/GeneratorService";
+import { palette } from "../theme/theme";
 
 export default StyleSheet.create({
     input:{
         borderWidth: 1,
-        borderColor: "#383838",
+        borderColor: palette.deepGreen,
         borderRadius: 8,
         marginVertical: 12,
-        color : "#666",
+        color : palette.green,
         padding:10,
         fontSize:20,
         fontWeight:"600"
@@ -26,12 +26,12 @@ export default StyleSheet.create({
         marginBottom: 24,
     },
     linkText:{
-        color:"#00b7ff",
+        color: palette.purple,
         fontStyle: "italic",
         fontWeight:"200"
     },
     linkTextPressed:{
-        color:"#5ec5ec",
+        color: palette.green,
         fontStyle: "italic",
         fontWeight:"200"
     },
@@ -68,7 +68,7 @@ export default StyleSheet.create({
     },
     QuuickGeneratorInput: {
         borderWidth: 1,
-        borderColor: "#999",
+        borderColor: palette.sage,
         borderRadius: 8,
         padding: 12,
     },
@@ -83,23 +83,25 @@ export default StyleSheet.create({
         paddingVertical: 8,
     },
     QuuickGeneratorError: {
-        color: "#b00020",
+        color: "#B3261E",
     },
     QuuickGeneratorPreview: {
         fontSize: 13,
-        color: "#555",
+        color: palette.deepGreen,
     },
     GeneratedPasswordResultContainer: {
-    padding: 20,
+    
+    padding: 24,
     gap: 16,
   },
   GeneratedPasswordResultTitle: {
+    color: "#fff",
     fontSize: 26,
     fontWeight: "700",
   },
   GeneratedPasswordResultCard: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: palette.sage,
     borderRadius: 8,
     padding: 16,
     gap: 6,
@@ -107,15 +109,16 @@ export default StyleSheet.create({
   GeneratedPasswordResultLabel: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#666",
+    color: palette.deepGreen,
   },
   GeneratedPasswordResultValue: {
+    color:palette.sage,
     fontSize: 16,
     marginBottom: 8,
   },
   GeneratedPasswordResultPasswordBox: {
     borderWidth: 1,
-    borderColor: "#999",
+    borderColor: palette.sage,
     borderRadius: 8,
     padding: 16,
     alignItems: "center",
@@ -126,7 +129,7 @@ export default StyleSheet.create({
   },
   GeneratedPasswordResultCopiedText: {
     fontSize: 14,
-    color: "#555",
+    color: palette.deepGreen,
   },
   GeneratedPasswordResultActions: {
     gap: 10,
@@ -134,7 +137,7 @@ export default StyleSheet.create({
   GeneratedPasswordResultWarning: {
     marginTop: 16,
     fontSize: 13,
-    color: "#555",
+    color: palette.deepGreen,
   },
   VaultListScreenContainer: {
     padding: 24,
@@ -146,13 +149,13 @@ export default StyleSheet.create({
   },
   VaultListScreenSearchInput: {
     borderWidth: 1,
-    borderColor: "#999",
+    borderColor: palette.sage,
     borderRadius: 8,
     padding: 12,
   },
   VaultListScreenRow: {
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: palette.sage,
     paddingVertical: 14,
   },
   VaultListScreenRowTitle: {
@@ -161,14 +164,14 @@ export default StyleSheet.create({
   },
   VaultListScreenRowSubtitle: {
     fontSize: 13,
-    color: "#555",
+    color: palette.deepGreen,
     marginTop: 3,
   },
   VaultListScreenEmpty: {
     marginTop: 24,
-    color: "#555",
+    color: palette.deepGreen,
   },
   VaultListScreenError: {
-    color: "#b00020",
+    color: "#B3261E",
   },
 })

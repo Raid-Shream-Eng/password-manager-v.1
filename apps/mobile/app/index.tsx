@@ -13,6 +13,7 @@ import { VaultListScreen } from "../src/screens/VaultListScreen";
 import { VaultItemDetailsScreen } from "../src/screens/VaultItemDetailsScreen"; 
 import { EditVaultItemScreen } from "../src/screens/EditVaultItemScreen";
 import { RecentlyDeletedScreen } from "../src/screens/RecentlyDeletedScreen";
+import { useAppTheme } from "../src/theme/theme";
 
 type ScreenState =
   | "create"
@@ -24,12 +25,18 @@ type ScreenState =
   | "vault-details"
   | "edit-vault-item"
   | "recently-deleted";
-function ScreenFrame({ children }: { children: React.ReactNode }) {
-  return <View style={styles.screenFrame}>{children}</View>;
+function ScreenFrame({   children,
+  backgroundColor,
+}: {
+  children: React.ReactNode;
+  backgroundColor: string;
+}) {
+  return <View style={[styles.screenFrame, {backgroundColor} ]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
   screenFrame: {
+    flex:1,
     paddingVertical: 24,
     paddingHorizontal: 15,
     marginBottom:10,
@@ -37,6 +44,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Index() {
+  const theme = useAppTheme();
   const [generatedResultParams, setGeneratedResultParams] =
     useState<GeneratedPasswordResultParams | null>(null);
   const [saveProfileParams, setSaveProfileParams] =
@@ -111,6 +119,14 @@ export default function Index() {
 const CanShowHeaderBack = screen !== "create" && screen !== "unlock" && screen !== "vault-list";
 
 const headerOptions = {
+  headerStyle: {
+  backgroundColor: theme.colors.surface,
+},
+headerTintColor: theme.colors.text,
+headerTitleStyle: {
+  color: theme.colors.text,
+  fontWeight: "700" as const,
+},
   title: screenTitle[screen],
   headerTitleAlign: "center" as const,
   headerBackVisible: false,
@@ -121,7 +137,7 @@ const headerOptions = {
             onPress={handleHeaderBack}
             style={{ paddingHorizontal: 12 }}
           >
-            <Text style={{ fontSize: 16 }}>Back</Text>
+            <Text style={{ fontSize: 16 ,color: theme.colors.text }}>Back</Text>
           </Pressable>
         ),
       }
@@ -264,7 +280,7 @@ const editVaultItemNavigation = {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ffcb87",
+          backgroundColor: theme.colors.background,
         }}
       >
         <ActivityIndicator />
@@ -277,7 +293,7 @@ const editVaultItemNavigation = {
     return (
     <>
     {header} 
-      <ScreenFrame>
+      <ScreenFrame backgroundColor={theme.colors.background}>
         <UnlockVaultScreen
           onUnlock={handleUnlock}
           onResetVault={handleResetVault}
@@ -290,7 +306,7 @@ const editVaultItemNavigation = {
   if (screen === "quick-generator") {
     return <>
      {header}
-      <ScreenFrame>
+      <ScreenFrame backgroundColor={theme.colors.background}>
          <QuickGeneratorScreen navigation={quickGeneratorNavigation} />
       </ScreenFrame>
     </>;
@@ -299,7 +315,7 @@ const editVaultItemNavigation = {
   if (screen === "generated-result" && generatedResultParams) {
     return (<>
     {header}
-     <ScreenFrame>
+     <ScreenFrame backgroundColor={theme.colors.background}>
       <GeneratedPasswordResultScreen
         route={{ params: generatedResultParams }}
         navigation={generatedResultNavigation}
@@ -315,7 +331,7 @@ const editVaultItemNavigation = {
   if (screen === "save-profile" && saveProfileParams) {
   return (<>
   {header}
-   <ScreenFrame>
+   <ScreenFrame backgroundColor={theme.colors.background}>
     <SaveGeneratedProfileScreen
       route={{ params: saveProfileParams }}
       navigation={saveProfileNavigation}
@@ -328,7 +344,7 @@ const editVaultItemNavigation = {
 if (screen === "vault-details" && vaultItemId) {
   return (<>
   {header}
-   <ScreenFrame>
+   <ScreenFrame backgroundColor={theme.colors.background}>
     <VaultItemDetailsScreen
       route={{ params: { itemId: vaultItemId } }}
       navigation={vaultDetailsNavigation}
@@ -342,7 +358,7 @@ if (screen === "edit-vault-item" && vaultItemId) {
   return (
   <>
   {header}
-   <ScreenFrame>
+   <ScreenFrame backgroundColor={theme.colors.background}>
     <EditVaultItemScreen
       route={{ params: { itemId: vaultItemId } }}
       navigation={editVaultItemNavigation}
@@ -363,10 +379,11 @@ if (screen === "recently-deleted") {
   return (
   <>
     {header}
-     <ScreenFrame>
+     <ScreenFrame backgroundColor={theme.colors.background}>
     <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: "#ffcb87" }}>
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
-    </ScrollView></ScreenFrame>
+    </ScrollView>
+    </ScreenFrame>
   </>
   );
 
