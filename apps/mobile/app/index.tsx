@@ -13,6 +13,7 @@ import { VaultListScreen } from "../src/screens/VaultListScreen";
 import { VaultItemDetailsScreen } from "../src/screens/VaultItemDetailsScreen"; 
 import { EditVaultItemScreen } from "../src/screens/EditVaultItemScreen";
 import { RecentlyDeletedScreen } from "../src/screens/RecentlyDeletedScreen";
+import { ResetVaultWarningScreen } from "../src/screens/ResetVaultWarningScreen";
 import { useAppTheme } from "../src/theme/theme";
 import { useAppLock } from "../src/hooks/useAppLock";
 import { ManualLockButton } from "../src/components/Customs/ManualLockButton";
@@ -24,6 +25,7 @@ type ScreenState =
   | "create"
   | "unlock"
   | "quick-generator"
+  | "reset-vault-warning"
   | "generated-result"
   | "save-profile"
   | "vault-list"
@@ -61,6 +63,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default function Index() {
   const theme = useAppTheme();
   const [generatedResultParams, setGeneratedResultParams] =
@@ -70,16 +73,27 @@ export default function Index() {
   const [vaultItemId, setVaultItemId] = useState<string | null>(null);
   const [screen, setScreen] = useState<ScreenState>("create");
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
-   const screenTitle: Record<ScreenState, string> = {
+  const screenTitle: Record<ScreenState, string> = {
   create: "Create Vault",
   unlock: "Unlock Vault",
   "quick-generator": "Quick Generator",
+  "reset-vault-warning": "Reset Vault",
   "generated-result": "Generated Password",
   "save-profile": "Save Profile",
   "vault-list": "Vault",
   "vault-details": "Vault Details",
   "edit-vault-item": "Edit Vault Item",
   "recently-deleted": "Recently Deleted",
+};
+const unlockNavigation = {
+  navigate: (screenName: string) => {
+    if (screenName === "ResetVaultWarning") {
+      setScreen("reset-vault-warning");
+      return;
+    }
+
+    Alert.alert("Navigation not implemented", screenName);
+  },
 };
   const dispatch = useDispatch();
   const isUnlocked = useSelector((state: RootState)=>state.session.isUnlocked);
@@ -88,7 +102,7 @@ export default function Index() {
     if (!isDatabaseReady) {
       return;
     }
-    if (!isUnlocked && screen !== "create" && screen !== "unlock") {
+    if (  !isUnlocked &&  screen !== "create" &&  screen !== "unlock" &&  screen !== "reset-vault-warning") {
       setGeneratedResultParams(null);
       setSaveProfileParams(null);
       setVaultItemId(null);
@@ -312,6 +326,7 @@ const editVaultItemNavigation = {
     setScreen("vault-details");
   },
 };
+  
 
   if (!isDatabaseReady) {
     return (
@@ -327,7 +342,6 @@ const editVaultItemNavigation = {
       </View>
     );
   }
-
   if (screen === "unlock") {
     return (
     <>
@@ -335,12 +349,37 @@ const editVaultItemNavigation = {
       <ScreenFrame backgroundColor={theme.colors.background}>
         <UnlockVaultScreen
           onUnlock={handleUnlock}
-          onResetVault={handleResetVault}
+          navigation={unlockNavigation}
         />
       </ScreenFrame>
     </>
     );
   }
+
+  if (screen === "reset-vault-warning") {
+  const resetVaultNavigation = {
+    navigate: (screenName: string) => {
+      if (screenName === "create") {
+        setScreen("create");
+        return;
+      }
+
+      Alert.alert("Navigation not implemented", screenName);
+    },
+    goBack: () => {
+      setScreen("unlock");
+    },
+  };
+
+  return (
+    <>
+      {header}
+      <ScreenFrame backgroundColor={theme.colors.background}>
+        <ResetVaultWarningScreen navigation={resetVaultNavigation} />
+      </ScreenFrame>
+    </>
+  );
+}
 
   if (screen === "quick-generator") {
     return <UnlockedSessionBoundary>

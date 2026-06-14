@@ -6,18 +6,24 @@ import { VaultSessionService } from "./VaultSessionService";
 import { VaultItemService } from "./VaultItemService";
 import { GeneratorService } from "./GeneratorService";
 import {  AppLockService } from "./AppLockService";
+import { HistoryRecordRepository } from "../repositories/HistoryRecordRepository";
+import { VaultResetService } from "./VaultResetService";
 
 const crypto = createCryptoProvider();
 
 const vaultHeaderRepository = new VaultHeaderRepository();
 const vaultRecordRepository = new VaultRecordRepository(); 
+const historyRecordRepository = new HistoryRecordRepository();
+
 
 const vaultSessionService = new VaultSessionService(
     vaultHeaderRepository,
     crypto,
 );
 
-const appLockService = new AppLockService(vaultSessionService)
+const appLockService = new AppLockService(vaultSessionService);
+
+
 export const services = {
     vaultCreationService: new VaultCreationService(
         vaultHeaderRepository,
@@ -35,4 +41,11 @@ export const services = {
     generatorService: new GeneratorService(vaultSessionService, crypto),
 
     appLockService,
+
+    vaultResetService : new VaultResetService(
+        vaultHeaderRepository,
+        vaultRecordRepository,
+        historyRecordRepository,
+        appLockService
+    ),
 };
