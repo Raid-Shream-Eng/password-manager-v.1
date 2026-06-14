@@ -124,6 +124,7 @@ export default StyleSheet.create({
     alignItems: "center",
   },
   GeneratedPasswordResultPasswordText: {
+    color:palette.green,
     fontSize: 20,
     fontWeight: "700",
   },

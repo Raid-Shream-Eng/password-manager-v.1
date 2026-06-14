@@ -5,6 +5,7 @@ import { VaultCreationService } from "./VaultCreationService";
 import { VaultSessionService } from "./VaultSessionService";
 import { VaultItemService } from "./VaultItemService";
 import { GeneratorService } from "./GeneratorService";
+import {  AppLockService } from "./AppLockService";
 
 const crypto = createCryptoProvider();
 
@@ -16,6 +17,7 @@ const vaultSessionService = new VaultSessionService(
     crypto,
 );
 
+const appLockService = new AppLockService(vaultSessionService)
 export const services = {
     vaultCreationService: new VaultCreationService(
         vaultHeaderRepository,
@@ -31,4 +33,6 @@ export const services = {
     ),
 
     generatorService: new GeneratorService(vaultSessionService, crypto),
+
+    appLockService,
 };

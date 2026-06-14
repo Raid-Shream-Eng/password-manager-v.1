@@ -1,27 +1,38 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+export type LockTimeoutSeconds = 30|60|120|300|600|900
+
 type SettingsState = {
-    theme: "system" | "light" | "dark";
-    language: string;
+    lockTimeoutSeconds: LockTimeoutSeconds;
+    themeMode: "system" | "light" | "dark";
+    language: "system" | "en" | "ar" ;
 };
 
 const initialState: SettingsState = {
-    theme: "system",
-    language: "en",
+    lockTimeoutSeconds: 120 ,
+    themeMode: "system",
+    language: "system",
 };
+
 
 const settingsSlice = createSlice({
     name: 'settings',
     initialState,
     reducers: {
-        setTheme(state, action: PayloadAction<SettingsState['theme']>) {
-            state.theme = action.payload;
+        setLockTimeoutSeconds(
+            state,
+            action: PayloadAction<LockTimeoutSeconds>
+        ){
+            state.lockTimeoutSeconds = action.payload;
         },
-        setLanguage(state, action: PayloadAction<string>) {
+        setThemeMode(state, action: PayloadAction<SettingsState['themeMode']>) {
+            state.themeMode = action.payload;
+        },
+        setLanguage(state, action: PayloadAction<SettingsState["language"]>) {
             state.language = action.payload;
         },
     },
 });
 
-export const { setTheme, setLanguage } = settingsSlice.actions;
+export const { setLockTimeoutSeconds, setThemeMode, setLanguage } = settingsSlice.actions;
 export default settingsSlice.reducer;

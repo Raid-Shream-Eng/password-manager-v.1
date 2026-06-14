@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert,Pressable,Text,TextInput,View } from "react-native";
 import style from "./style";
 import { CustomButton } from "../components/Customs/customButton";
+import { setUnlocked } from "../store/sessionSlice";
 
 type Props = {
     onUnlock: (masterPassword:string)=>Promise<void>
@@ -21,7 +22,6 @@ export function UnlockVaultScreen({ onUnlock , onResetVault }:Props){
         }       
 
         setIsSubmitting(true);
-
         try{
             await onUnlock(masterPassword)
         }finally{

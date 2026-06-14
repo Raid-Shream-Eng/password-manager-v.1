@@ -14,6 +14,11 @@ import { VaultItemDetailsScreen } from "../src/screens/VaultItemDetailsScreen";
 import { EditVaultItemScreen } from "../src/screens/EditVaultItemScreen";
 import { RecentlyDeletedScreen } from "../src/screens/RecentlyDeletedScreen";
 import { useAppTheme } from "../src/theme/theme";
+import { useAppLock } from "../src/hooks/useAppLock";
+import { ManualLockButton } from "../src/components/Customs/ManualLockButton";
+import { useDispatch, useSelector } from "react-redux";
+import { setUnlocked } from "../src/store/sessionSlice";
+import type { RootState } from "../src/store";
 
 type ScreenState =
   | "create"
@@ -25,6 +30,19 @@ type ScreenState =
   | "vault-details"
   | "edit-vault-item"
   | "recently-deleted";
+
+
+  function UnlockedSessionBoundary({children}: {children: React.ReactNode}) {
+
+    const { resetInactivityTimer } = useAppLock();
+
+    return (
+      <View style={{flex:1}} onTouchStart={resetInactivityTimer}>
+        {children}
+      </View>
+    )
+  }
+
 function ScreenFrame({   children,
   backgroundColor,
 }: {
@@ -63,6 +81,20 @@ export default function Index() {
   "edit-vault-item": "Edit Vault Item",
   "recently-deleted": "Recently Deleted",
 };
+  const dispatch = useDispatch();
+  const isUnlocked = useSelector((state: RootState)=>state.session.isUnlocked);
+
+  useEffect(()=>{
+    if (!isDatabaseReady) {
+      return;
+    }
+    if (!isUnlocked && screen !== "create" && screen !== "unlock") {
+      setGeneratedResultParams(null);
+      setSaveProfileParams(null);
+      setVaultItemId(null);
+      setScreen("unlock");
+    }
+  },[isUnlocked, isDatabaseReady, screen])
   useEffect(() => {
     async function prepareDatabase() {
       try {
@@ -118,6 +150,8 @@ export default function Index() {
 }
 const CanShowHeaderBack = screen !== "create" && screen !== "unlock" && screen !== "vault-list";
 
+const canShowManualLock = screen !== "create" && screen !== "unlock";
+
 const headerOptions = {
   headerStyle: {
   backgroundColor: theme.colors.surface,
@@ -142,6 +176,10 @@ headerTitleStyle: {
         ),
       }
     : {}),
+    ...(canShowManualLock
+      ?{
+        headerRight: ()=> <ManualLockButton/>
+      } : {}),
 };
 
 const header = <Stack.Screen options={headerOptions} />;
@@ -167,6 +205,7 @@ const header = <Stack.Screen options={headerOptions} />;
       return;
     }
 
+    dispatch(setUnlocked({unlockedAt: new Date().toISOString()}));
     Alert.alert("Vault unlocked", "You can now use Quick Generator.");
     setScreen("vault-list");
   }
@@ -304,16 +343,16 @@ const editVaultItemNavigation = {
   }
 
   if (screen === "quick-generator") {
-    return <>
+    return <UnlockedSessionBoundary>
      {header}
       <ScreenFrame backgroundColor={theme.colors.background}>
          <QuickGeneratorScreen navigation={quickGeneratorNavigation} />
       </ScreenFrame>
-    </>;
+    </UnlockedSessionBoundary>;
   }
 
   if (screen === "generated-result" && generatedResultParams) {
-    return (<>
+    return (<UnlockedSessionBoundary>
     {header}
      <ScreenFrame backgroundColor={theme.colors.background}>
       <GeneratedPasswordResultScreen
@@ -321,15 +360,15 @@ const editVaultItemNavigation = {
         navigation={generatedResultNavigation}
       />
       </ScreenFrame>
-      </>
+      </UnlockedSessionBoundary>
     );
   }
 
   if (screen === "vault-list") {
-    return <>{header}<VaultListScreen navigation={vaultListNavigation} /></>;
+    return <UnlockedSessionBoundary>{header}<VaultListScreen navigation={vaultListNavigation} /></UnlockedSessionBoundary>;
   }
   if (screen === "save-profile" && saveProfileParams) {
-  return (<>
+  return (<UnlockedSessionBoundary>
   {header}
    <ScreenFrame backgroundColor={theme.colors.background}>
     <SaveGeneratedProfileScreen
@@ -337,12 +376,12 @@ const editVaultItemNavigation = {
       navigation={saveProfileNavigation}
     />
     </ScreenFrame>
-    </>
+    </UnlockedSessionBoundary>
   );
 }
 
 if (screen === "vault-details" && vaultItemId) {
-  return (<>
+  return (<UnlockedSessionBoundary>
   {header}
    <ScreenFrame backgroundColor={theme.colors.background}>
     <VaultItemDetailsScreen
@@ -350,13 +389,13 @@ if (screen === "vault-details" && vaultItemId) {
       navigation={vaultDetailsNavigation}
     />
     </ScreenFrame>
-    </>
+    </UnlockedSessionBoundary>
   );
 }
 
 if (screen === "edit-vault-item" && vaultItemId) {
   return (
-  <>
+  <UnlockedSessionBoundary>
   {header}
    <ScreenFrame backgroundColor={theme.colors.background}>
     <EditVaultItemScreen
@@ -364,7 +403,7 @@ if (screen === "edit-vault-item" && vaultItemId) {
       navigation={editVaultItemNavigation}
     />
     </ScreenFrame>
-  </>
+  </UnlockedSessionBoundary>
   );
 }
 
@@ -374,7 +413,7 @@ if (screen === "recently-deleted") {
     setScreen("vault-list");
   },
 };
-  return <>{header}<RecentlyDeletedScreen navigation={recentlyDeletedNavigation} /></>;
+  return <UnlockedSessionBoundary>{header}<RecentlyDeletedScreen navigation={recentlyDeletedNavigation} /></UnlockedSessionBoundary>;
 }
   return (
   <>
