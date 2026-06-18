@@ -60,14 +60,18 @@ export function UnlockVaultScreen({ onUnlock , navigation }:Props){
   }}>    
             <Text style={isForgotPressed ? style.linkTextPressed : style.linkText}> { forgotText } </Text>
         </Pressable> 
-        <Button
-        title="Forgot master password?"
-        color="#aa0000"
-        onPress={() => {
-    navigation.navigate("ResetVaultWarning");
-  }}
-        disabled={isSubmitting}
+        <View style={{ margin:25 , padding: 5}}>
+            <Button
+                title="Forgot master password?"
+                color="#aa0000"
+                onPress={() => {
+
+                    navigation.navigate("ResetVaultWarning");
+                }}
+                disabled={isSubmitting}
         />
+        </View>
+        
     </View>
     );
 
