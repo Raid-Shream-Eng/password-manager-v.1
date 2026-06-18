@@ -204,6 +204,7 @@ export class VaultRecordRepository{
                 error:{
                     code: "DATABASE_ERROR",
                     message: "Failed to delete all vault records.",
+                    cause,
                 },
             };
         }

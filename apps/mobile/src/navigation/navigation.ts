@@ -44,4 +44,5 @@ export type UnlockedStackParamList = {
   EditVaultItem: EditVaultItemParams;
   RecentlyDeleted: undefined;
   Settings: undefined;
+  SecurityInfo: undefined;
 };

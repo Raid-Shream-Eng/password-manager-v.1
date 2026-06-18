@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 import { useClipboardTimeout } from "../hooks/useClipboardTimeout";
 import type { VaultItemDetailsParams } from "../navigation/navigation";
 import type { DecryptedVaultItemV1 } from "../services/VaultItemService";

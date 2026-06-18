@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, ScrollView, Text, TextInput, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 import {
   saveGeneratedProfileSchema,
   type SaveGeneratedProfileFormValues,

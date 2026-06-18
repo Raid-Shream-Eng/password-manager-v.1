@@ -11,7 +11,7 @@ import {
 import { useVaultItems } from "../hooks/useVaultItems";
 import type { DecryptedVaultItemV1 } from "../services/VaultItemService";
 import Style from "./style";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 
 type Props = {
   navigation: {
@@ -66,6 +66,7 @@ export function VaultListScreen({ navigation }: Props) {
       />
 
       <Button title="Add Item" onPress={handleAddItem} />
+      <Button title="Settings" onPress={() => navigation.navigate("Settings")} />
 
       {errorCode && <Text style={Style.VaultListScreenError}>Error: {errorCode}</Text>}
 

@@ -1,4 +1,6 @@
 import { useColorScheme } from "react-native";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
 
 export const palette = {
       purple: "#766DA7",
@@ -41,6 +43,16 @@ export const darkTheme = {
 };
 
 export function useAppTheme() {
+  const themeMode = useSelector((state: RootState) => state.settings.themeMode);
   const scheme = useColorScheme();
+
+  if (themeMode === "light") {
+    return lightTheme;
+  }
+
+  if (themeMode === "dark") {
+    return darkTheme;
+  }
+
   return scheme === "dark" ? darkTheme : lightTheme;
 }

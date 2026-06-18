@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Button, ScrollView, Text, View } from "react-native";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 import Style from './style';
 import  { useClipboardTimeout } from "../hooks/useClipboardTimeout";
 import { services } from "../services/serviceContainer";
