@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert, Text, View } from "react-native";
-import { CustomButton } from "../components/Customs/customButton"
+import { CustomButton } from "../components/customs/customButton"
 import Style from "./style";
 import { defaultPasswordProfileV1 } from "@password-manager/shared-types";
 import { services } from "../services/serviceContainer";

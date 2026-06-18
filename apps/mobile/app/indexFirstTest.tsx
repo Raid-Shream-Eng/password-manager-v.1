@@ -5,13 +5,23 @@ import { DevVaultItemTestScreen } from "../src/screens/DevVaultItemTestScreen";
 import { UnlockVaultScreen } from "../src/screens/UnlockVaultScreen";
 import { services } from "../src/services/serviceContainer";
 import { initializeDatabase } from "../src/repositories/database";
+import { ResetVaultWarningScreen } from "../src/screens/ResetVaultWarningScreen";
 
-type ScreenState = "create" | "unlock" | "dev-test";
+type ScreenState = "create" | "unlock" | "dev-test"| "reset-vault-warning" ;
 
 export default function Index() {
   const [screen, setScreen] = useState<ScreenState>("create");
   const [isDatabaseReady,setIsDatabaseReady] = useState(false);
-  
+  const unlockNavigation = {
+  navigate: (screenName: string) => {
+    if (screenName === "ResetVaultWarning") {
+      setScreen("reset-vault-warning");
+      return;
+    }
+
+    Alert.alert("Navigation not implemented", screenName);
+  },
+};
   useEffect(()=> {
     async function prepareDatabase() {
       try {
@@ -66,6 +76,17 @@ export default function Index() {
       "This button is only here for the temporary test flow.",
     );
   }
+  
+  if (screen === "reset-vault-warning") {
+  return (
+    <ResetVaultWarningScreen
+      navigation={{
+        navigate: () => setScreen("create"),
+        goBack: () => setScreen("unlock"),
+      }}
+    />
+  );
+  }
 
   if (!isDatabaseReady) {
     return (
@@ -85,7 +106,7 @@ export default function Index() {
     return (
       <UnlockVaultScreen
         onUnlock={handleUnlock}
-        onResetVault={handleResetVault}
+        navigation={unlockNavigation}
       />
     );
   }
@@ -99,4 +120,5 @@ export default function Index() {
       <CreateMasterPasswordScreen onCreateVault={handleCreateVault} />
     </View>
   );
+  
 }

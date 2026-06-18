@@ -24,7 +24,7 @@ import {
 import { normalizeGenerationLabel } from "../utils/normalizeGenerationLabel";
 // I'll use this later cuz I dont want to forget import { useRootNavigationState } from "expo-router";
 import Style from "./style";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 
 type Props = {
     navigation:{

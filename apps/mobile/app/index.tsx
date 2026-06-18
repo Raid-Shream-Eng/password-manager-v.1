@@ -13,23 +13,30 @@ import { VaultListScreen } from "../src/screens/VaultListScreen";
 import { VaultItemDetailsScreen } from "../src/screens/VaultItemDetailsScreen"; 
 import { EditVaultItemScreen } from "../src/screens/EditVaultItemScreen";
 import { RecentlyDeletedScreen } from "../src/screens/RecentlyDeletedScreen";
+import { ResetVaultWarningScreen } from "../src/screens/ResetVaultWarningScreen";
 import { useAppTheme } from "../src/theme/theme";
 import { useAppLock } from "../src/hooks/useAppLock";
-import { ManualLockButton } from "../src/components/Customs/ManualLockButton";
+import { ManualLockButton } from "../src/components/customs/ManualLockButton";
 import { useDispatch, useSelector } from "react-redux";
 import { setUnlocked } from "../src/store/sessionSlice";
 import type { RootState } from "../src/store";
+import { SettingsScreen } from "../src/screens/SettingsScreen";
+import { SecurityInfoScreen } from "../src/screens/SecurityInfoScreen";
+
 
 type ScreenState =
   | "create"
   | "unlock"
   | "quick-generator"
+  | "reset-vault-warning"
   | "generated-result"
   | "save-profile"
   | "vault-list"
   | "vault-details"
   | "edit-vault-item"
-  | "recently-deleted";
+  | "recently-deleted"
+  | "settings"
+  | "security-info";
 
 
   function UnlockedSessionBoundary({children}: {children: React.ReactNode}) {
@@ -61,6 +68,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default function Index() {
   const theme = useAppTheme();
   const [generatedResultParams, setGeneratedResultParams] =
@@ -70,16 +78,29 @@ export default function Index() {
   const [vaultItemId, setVaultItemId] = useState<string | null>(null);
   const [screen, setScreen] = useState<ScreenState>("create");
   const [isDatabaseReady, setIsDatabaseReady] = useState(false);
-   const screenTitle: Record<ScreenState, string> = {
+  const screenTitle: Record<ScreenState, string> = {
   create: "Create Vault",
   unlock: "Unlock Vault",
   "quick-generator": "Quick Generator",
+  "reset-vault-warning": "Reset Vault",
   "generated-result": "Generated Password",
   "save-profile": "Save Profile",
   "vault-list": "Vault",
   "vault-details": "Vault Details",
   "edit-vault-item": "Edit Vault Item",
   "recently-deleted": "Recently Deleted",
+  settings: "Settings",
+  "security-info": "Security Info",
+};
+const unlockNavigation = {
+  navigate: (screenName: string) => {
+    if (screenName === "ResetVaultWarning") {
+      setScreen("reset-vault-warning");
+      return;
+    }
+
+    Alert.alert("Navigation not implemented", screenName);
+  },
 };
   const dispatch = useDispatch();
   const isUnlocked = useSelector((state: RootState)=>state.session.isUnlocked);
@@ -88,7 +109,7 @@ export default function Index() {
     if (!isDatabaseReady) {
       return;
     }
-    if (!isUnlocked && screen !== "create" && screen !== "unlock") {
+    if (  !isUnlocked &&  screen !== "create" &&  screen !== "unlock" &&  screen !== "reset-vault-warning") {
       setGeneratedResultParams(null);
       setSaveProfileParams(null);
       setVaultItemId(null);
@@ -120,6 +141,16 @@ export default function Index() {
   function handleHeaderBack() {
   if (screen === "quick-generator") {
     setScreen("vault-list");
+    return;
+  }
+
+  if (screen === "settings") {
+    setScreen("vault-list");
+    return;
+  }
+
+  if (screen === "security-info") {
+    setScreen("settings");
     return;
   }
 
@@ -243,10 +274,15 @@ const header = <Stack.Screen options={headerOptions} />;
     },
   };
 
-  const vaultListNavigation = {
+const vaultListNavigation = {
   navigate: (screenName: string, params?: unknown) => {
     if (screenName === "QuickGenerator") {
       setScreen("quick-generator");
+      return;
+    }
+
+    if (screenName === "Settings") {
+      setScreen("settings");
       return;
     }
 
@@ -261,6 +297,7 @@ const header = <Stack.Screen options={headerOptions} />;
       setScreen("recently-deleted");
       return;
     }
+
     Alert.alert("Navigation not implemented", screenName);
   },
 };
@@ -312,6 +349,7 @@ const editVaultItemNavigation = {
     setScreen("vault-details");
   },
 };
+  
 
   if (!isDatabaseReady) {
     return (
@@ -327,7 +365,6 @@ const editVaultItemNavigation = {
       </View>
     );
   }
-
   if (screen === "unlock") {
     return (
     <>
@@ -335,12 +372,37 @@ const editVaultItemNavigation = {
       <ScreenFrame backgroundColor={theme.colors.background}>
         <UnlockVaultScreen
           onUnlock={handleUnlock}
-          onResetVault={handleResetVault}
+          navigation={unlockNavigation}
         />
       </ScreenFrame>
     </>
     );
   }
+
+  if (screen === "reset-vault-warning") {
+  const resetVaultNavigation = {
+    navigate: (screenName: string) => {
+      if (screenName === "create") {
+        setScreen("create");
+        return;
+      }
+
+      Alert.alert("Navigation not implemented", screenName);
+    },
+    goBack: () => {
+      setScreen("unlock");
+    },
+  };
+
+  return (
+    <>
+      {header}
+      <ScreenFrame backgroundColor={theme.colors.background}>
+        <ResetVaultWarningScreen navigation={resetVaultNavigation} />
+      </ScreenFrame>
+    </>
+  );
+}
 
   if (screen === "quick-generator") {
     return <UnlockedSessionBoundary>
@@ -415,6 +477,47 @@ if (screen === "recently-deleted") {
 };
   return <UnlockedSessionBoundary>{header}<RecentlyDeletedScreen navigation={recentlyDeletedNavigation} /></UnlockedSessionBoundary>;
 }
+const settingsNavigation = {
+  navigate: (screenName: string) => {
+    if (screenName === "SecurityInfo") {
+      setScreen("security-info");
+      return;
+    }
+
+    if (screenName === "RecentlyDeleted") {
+      setScreen("recently-deleted");
+      return;
+    }
+
+    if (screenName === "ResetVaultWarning") {
+      setScreen("reset-vault-warning");
+      return;
+    }
+
+    Alert.alert("Navigation not implemented", screenName);
+  },
+};
+if (screen === "settings") {
+  return (
+    <UnlockedSessionBoundary>
+      {header}
+      <ScreenFrame backgroundColor={theme.colors.background}>
+        <SettingsScreen navigation={settingsNavigation} />
+      </ScreenFrame>
+    </UnlockedSessionBoundary>
+  );
+}
+
+if (screen === "security-info") {
+  return (
+    <UnlockedSessionBoundary>
+      {header}
+      <ScreenFrame backgroundColor={theme.colors.background}>
+        <SecurityInfoScreen />
+      </ScreenFrame>
+    </UnlockedSessionBoundary>
+  );
+}
   return (
   <>
     {header}
@@ -425,5 +528,4 @@ if (screen === "recently-deleted") {
     </ScreenFrame>
   </>
   );
-
 }

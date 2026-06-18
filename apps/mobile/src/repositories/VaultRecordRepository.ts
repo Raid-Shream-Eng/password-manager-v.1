@@ -185,4 +185,28 @@ export class VaultRecordRepository{
             };
         }
     }
+
+    async deleteAll(): Promise<Result<void>> {
+        try {
+
+            const db = await getDatabase();
+
+            await db.runAsync(`DELETE FROM vault_records;`);
+
+            return {
+                ok: true,
+                value: undefined,
+            };
+            
+        } catch (cause) {
+            return {
+                ok: false,
+                error:{
+                    code: "DATABASE_ERROR",
+                    message: "Failed to delete all vault records.",
+                    cause,
+                },
+            };
+        }
+    }
 }

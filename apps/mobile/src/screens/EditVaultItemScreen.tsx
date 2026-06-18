@@ -19,7 +19,7 @@ import type { DecryptedVaultItemV1 } from "../services/VaultItemService";
 import { editVaultItemSchema, type EditVaultItemFormValues, } from "../forms/editeVaultItem.schema";
 import { normalizeGenerationLabel } from "../utils/normalizeGenerationLabel";
 import { buildGenerationIdentityKey } from "../utils/buildGenerationIdentityKey";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 
 type Props = {
     route: {

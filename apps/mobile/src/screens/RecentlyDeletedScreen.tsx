@@ -11,7 +11,7 @@ import {
 import type { DecryptedVaultItemV1 } from '../services/VaultItemService'; 
 import { services } from '../services/serviceContainer';
 import { useDeletedVaultItems } from '../hooks/useDeletedVaultItems';
-import { CustomButton } from '../components/Customs/customButton';
+import { CustomButton } from '../components/customs/customButton';
 
 type Props = {
   navigation: {

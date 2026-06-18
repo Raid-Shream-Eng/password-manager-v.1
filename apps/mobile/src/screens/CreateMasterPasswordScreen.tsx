@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {Alert,Text,TextInput,View,} from "react-native";
-import {CustomButton as MasterButton} from "../components/Customs/customButton";
+import {CustomButton as MasterButton} from "../components/customs/customButton";
 import style from "./style";
 type Props = {
     onCreateVault: (masterPassword: string)=> Promise<void>;

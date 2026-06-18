@@ -1,11 +1,13 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export type LockTimeoutSeconds = 30|60|120|300|600|900
+export type ThemeMode = "system" | "light" | "dark";
+export type AppLanguage = "system" | "en" | "ar";
 
 type SettingsState = {
     lockTimeoutSeconds: LockTimeoutSeconds;
-    themeMode: "system" | "light" | "dark";
-    language: "system" | "en" | "ar" ;
+    themeMode: ThemeMode;
+    language: AppLanguage;
 };
 
 const initialState: SettingsState = {

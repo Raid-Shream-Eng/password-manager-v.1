@@ -1,0 +1,26 @@
+import type {Result} from "@password-manager/shared-types";
+import { getDatabase } from "./database" ;
+export class HistoryRecordRepository{
+    async deleteAll():Promise<Result<void>>{
+        try {
+            const db = await getDatabase();
+
+            await db.runAsync(`DELETE FROM history_records;`);
+
+            return {
+                ok: true,
+                value: undefined,
+            };
+        
+        } catch (cause) {
+            return {
+                ok: false,
+                error: {
+                    code: "DATABASE_ERROR",
+                    message: "",
+                    cause, 
+                },
+            };
+        }
+    }
+}

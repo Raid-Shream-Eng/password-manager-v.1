@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { Alert,Pressable,Text,TextInput,View } from "react-native";
+import { Alert,Button,Pressable,Text,TextInput,View } from "react-native";
 import style from "./style";
-import { CustomButton } from "../components/Customs/customButton";
+import { CustomButton } from "../components/customs/customButton";
 import { setUnlocked } from "../store/sessionSlice";
 
 type Props = {
     onUnlock: (masterPassword:string)=>Promise<void>
-    onResetVault: ()=> void
+    navigation: {
+        navigate: (screen: string) => void;
+    }
 };
 
-export function UnlockVaultScreen({ onUnlock , onResetVault }:Props){
+export function UnlockVaultScreen({ onUnlock , navigation }:Props){
     const [masterPassword,setMasterPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isForgotPressed, setIsForgotPressed] = useState(false);
@@ -53,9 +55,23 @@ export function UnlockVaultScreen({ onUnlock , onResetVault }:Props){
         disabled={isSubmitting}
         />
         
-        <Pressable onPressIn={handleForgotPressIn} onPressOut={handleForgotPressOut} onPress={onResetVault}>    
+        <Pressable onPressIn={handleForgotPressIn} onPressOut={handleForgotPressOut} onPress={() => {
+    navigation.navigate("ResetVaultWarning");
+  }}>    
             <Text style={isForgotPressed ? style.linkTextPressed : style.linkText}> { forgotText } </Text>
-        </Pressable>
+        </Pressable> 
+        <View style={{ margin:25 , padding: 5}}>
+            <Button
+                title="Forgot master password?"
+                color="#aa0000"
+                onPress={() => {
+
+                    navigation.navigate("ResetVaultWarning");
+                }}
+                disabled={isSubmitting}
+        />
+        </View>
+        
     </View>
     );
 

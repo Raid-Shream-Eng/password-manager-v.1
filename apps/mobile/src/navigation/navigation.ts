@@ -27,6 +27,13 @@ export type EditVaultItemParams = {
   itemId: string;
 };
 
+export type LockedStackParamList = {
+  Welcome: undefined;
+  CreateMasterPassword: undefined;
+  UnlockVault: undefined;
+  ResetVaultWarning: undefined;
+};
+
 export type UnlockedStackParamList = {
   Home: undefined;
   QuickGenerator: undefined;
@@ -36,4 +43,6 @@ export type UnlockedStackParamList = {
   VaultItemDetails: VaultItemDetailsParams;
   EditVaultItem: EditVaultItemParams;
   RecentlyDeleted: undefined;
+  Settings: undefined;
+  SecurityInfo: undefined;
 };
