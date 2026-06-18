@@ -75,7 +75,7 @@ For the MVP, I started using Expo-compatible crypto tools and noble libraries. T
 
 This is the Expo React Native app.
 
-Right now, it contains the local vault flow, repository layer, vault session service, encrypted vault item service, quick generator screen, and generated password result screen.
+Right now, it contains the local vault flow, repository layer, vault session service, encrypted vault item service, quick generator flow, saved vault item screens, recently deleted items, reset-vault flow, and settings screens.
 
 The mobile app will eventually handle:
 
@@ -86,6 +86,7 @@ The mobile app will eventually handle:
 - generating passwords
 - copying generated passwords with a clipboard timeout
 - managing settings
+- resetting the local vault when the master password is forgotten
 
 ## Current Progress
 
@@ -107,6 +108,12 @@ Completed or started:
 - Added the quick generator screen.
 - Added the generated password result screen.
 - Added clipboard timeout behavior for generated passwords.
+- Added save-generated-profile and vault item details/edit screens.
+- Added soft-delete and recently deleted flows.
+- Added manual lock and auto-lock timeout support.
+- Added Settings and Security Information screens.
+- Added theme and language settings in Redux.
+- Added reset-vault confirmation flow using the phrase `DELETE MY VAULT`.
 - Added a temporary app screen switch so I can manually test the MVP flow before building the final navigation.
 
 Current manual app flow:
@@ -114,12 +121,19 @@ Current manual app flow:
 ```text
 Create vault if needed
 Unlock vault
+Vault List
+Settings
+Security Information
+Recently Deleted
 Quick Generator
 Generated Password Result
-Copy or reveal generated password
+Save Generated Profile
+Vault Item Details
+Edit Vault Item
+Reset Vault Warning
 ```
 
-The app also has a temporary dev vault item test screen that I used to confirm encrypted vault item create/read/list behavior.
+The app still uses a manual screen-state router inside `apps/mobile/app/index.tsx` while I build out the MVP flow. Some navigation type definitions already exist, but the current runtime flow is still controlled by that manual switch.
 
 ## Security Rules I Am Following
 
@@ -129,11 +143,13 @@ I am trying to keep the project secure by following these rules:
 - Do not store the master password globally.
 - Do not store vault keys in Redux.
 - Do not store generated passwords after the screen is closed.
+- Do not expose secrets from Settings.
 - Do not commit vault files, keys, `.env` files, or generated build files.
 - Use `Result<T>` for expected errors instead of throwing exceptions.
 - Keep saved contracts versioned with `V1`.
 - Keep shared contracts in `shared-types`.
 - Keep password generation independent from the mobile UI.
+- Keep Redux settings limited to non-secret preferences such as timeout, theme, and language.
 
 ## Important Security Notes
 
@@ -151,6 +167,16 @@ recovery key
 
 These values should only live in memory for as long as they are needed.
 
+Redux may store non-secret UI and app-session state, such as:
+
+```text
+lock timeout
+theme mode
+language mode
+whether the vault is currently unlocked
+last lock reason
+```
+
 ## Local Storage Plan
 
 For local storage, I am using a repository layer around Expo SQLite.
@@ -167,6 +193,24 @@ app_settings
 ```
 
 The vault records store encrypted payloads, nonces, encryption version, and encryption algorithm metadata. Plaintext vault item data should not be stored in SQLite.
+
+The reset-vault flow deletes local vault data but keeps non-secret app preferences:
+
+- deletes vault records
+- deletes history records
+- deletes the vault header
+- locks the active vault session
+- clears the Redux unlocked session state
+- keeps theme and language settings
+- returns the user to the create-vault flow
+
+Reset is protected by the exact confirmation phrase:
+
+```text
+DELETE MY VAULT
+```
+
+Reset cannot be undone. There is no export option in the forgotten-master-password flow because the vault cannot be unlocked.
 
 ## Password Generation Flow
 
@@ -216,9 +260,10 @@ pnpm.cmd --filter mobile start -- --clear
 The next steps are:
 
 - Finish replacing the temporary app screen switch with real navigation.
-- Add the save-generated-profile flow.
-- Add the real saved vault item UI.
+- Wire the selected language setting into the i18n layer so app text can change language.
+- Decide whether settings should be persisted through `app_settings`.
 - Add automated service tests for encrypted vault item behavior.
+- Add automated tests for vault reset behavior.
 - Add automated tests for wrong-key and tamper-detection behavior.
 - Manually test the crypto provider inside Expo and Android APK builds.
 - Replace any temporary password KDF placeholder with a real password KDF before real use.
@@ -237,3 +282,5 @@ Before real use, I still need to make sure:
 - all repository and service layers pass typecheck and tests
 - generated passwords are not saved to Redux, SQLite, logs, navigation params, or crash reports
 - the temporary testing screens are replaced by production navigation and screens
+- selected language is connected to real translations instead of only being stored in Redux
+- settings persistence behavior is finalized
